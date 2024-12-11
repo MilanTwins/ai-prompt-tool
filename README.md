@@ -8,8 +8,8 @@ The AI Prompt Tool is a sophisticated system designed to generate structured pro
 
 The project is organized into the following main components:
 
-- `config/`: Contains configuration files for project instructions, codebase context, response format, and settings.
-- `data/`: Stores generated data such as code structure and context.
+- `config/`: Contains configuration files for project instructions, codebase context, settings, and formats.
+- `data/`: Stores generated data such as code structure, context, and the final prompt.
 - `scripts/`: Houses Python scripts for generating project structure and prompts.
 - `templates/`: Contains the Jinja2 template for the final prompt.
 
@@ -18,6 +18,8 @@ Key files:
 - `scripts/generate_structure.py`: Generates the project structure and code context.
 - `scripts/generate_prompt.py`: Creates the final prompt using the gathered information.
 - `templates/prompt_template.jinja2`: Template for structuring the final prompt.
+- `config/settings.yaml`: Contains settings such as the source directory.
+- `config/final_request.txt`: Contains the specific request for the AI model.
 
 ## How It Works
 
@@ -27,9 +29,10 @@ Key files:
    - Runs `generate_structure.py` to analyze the project structure.
    - Executes `generate_prompt.py` to create the final prompt.
 
-2. `generate_structure.py` (not provided in the given files) likely scans the project directory and generates:
-   - `data/code_structure.json`: A JSON representation of the project structure.
-   - `data/code_context.md`: A Markdown file containing relevant code snippets and context.
+2. `generate_structure.py`:
+   - Scans the project directory specified in `config/settings.yaml`.
+   - Generates `data/code_structure.json`: A JSON representation of the project structure.
+   - Creates `data/code_context.md`: A Markdown file containing relevant code snippets and context.
 
 3. `generate_prompt.py`:
    - Loads configuration files from the `config/` directory.
@@ -53,17 +56,20 @@ Key files:
    ```
    ./run_full_process.sh
    ```
-4. The generated prompt will be saved in `data/final_prompt.txt`.
-5. Use the content of `data/final_prompt.txt` with your AI assistant or model.
+4. When prompted, confirm that you want to proceed with scanning the project source directory.
+5. The generated prompt will be saved in `data/final_prompt.txt`.
+6. Use the content of `data/final_prompt.txt` with your AI assistant or model.
 
 ## Customization
 
 - Modify `config/project_instructions.yaml` to update project-specific instructions.
 - Edit `config/codebase_context.yaml` to provide context for key files in your project.
-- Adjust `config/response_format.yaml` to specify the desired format for AI responses.
+- Adjust format files in `config/formats/` to specify the desired format for AI responses.
 - Update `config/settings.yaml` to change the source directory or other settings.
 - Modify `config/final_request.txt` to customize the specific request for the AI model.
 
 ## Note
 
 This tool is designed to create structured and context-rich prompts for AI models, particularly useful for code analysis, refactoring suggestions, or answering specific questions about a codebase. The generated prompt provides a comprehensive overview of the project, allowing the AI to give more accurate and relevant responses.
+
+After generating the prompt, the script will display the character count and an estimated token count for the generated prompt, which can be useful for managing token limits in AI models.
