@@ -1,34 +1,38 @@
-# Node.js / JavaScript / React related
-node_modules/
-dist/
-build/
-coverage/
-.cache/
-out/
-*.log
-yarn.lock
-package-lock.json
-
-# Python related
+# Ignorer les environnements virtuels Python
 venv/
 *.pyc
 __pycache__/
 
-# Environnements et fichiers sensibles
-.env
-.env.*
+# Ignorer les fichiers et dossiers de build
+dist/
+build/
+out/
+coverage/
+
+# Ignorer les caches et fichiers temporaires
+.cache/
+*.log
+*.tmp
 *.bak
 *.swp
-*.tmp
-
-# Systèmes d'exploitation
 .DS_Store
 Thumbs.db
 
-# Données générées par les scripts
-data/code_structure.json
-data/code_context.md
-data/final_prompt.txt
+# Ignorer le répertoire d'output généré par les scripts
+output/
 
-# Tout autre fichier temporaire
-*.tmp
+# Ignorer les répertoires courants dans les projets JS/Node
+node_modules/
+
+# Ignorer les fichiers de configuration sensibles
+.env
+.env.*
+
+# Ignorer le répertoire data/ s'il existe encore
+data/
+
+# Ignorer d'autres répertoires internes
+.github/
+.idea/
+.vscode/
+.husky/
