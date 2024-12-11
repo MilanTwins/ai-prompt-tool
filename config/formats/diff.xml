@@ -1,17 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <format>
   <instructions>
-    <instruction>Provide all code changes as a unified diff (patch) format.</instruction>
-    <instruction>Include all modifications for all files in a single ```diff code block.</instruction>
-    <instruction>Do not provide explanations outside the diff code block.</instruction>
+    <instruction>Fournir toutes les modifications de code au format unified diff (patch).</instruction>
+    <instruction>Inclure toutes les modifications pour tous les fichiers dans un seul bloc de code.</instruction>
+    <instruction>
+      Au lieu d'utiliser des backticks, utilisez le délimiteur suivant :
+      Commencez le bloc par <code>&lt;&lt;&lt;diff</code> sur une seule ligne, puis le contenu du diff,
+      et terminez par <code>&gt;&gt;&gt;</code> sur une seule ligne.
+    </instruction>
+    <instruction>Aucune explication ou commentaire ne doit apparaître en dehors du bloc.</instruction>
   </instructions>
   <examples>
-    <example>```diff</example>
+    <example>&lt;&lt;&lt;diff</example>
     <example>--- a/path/to/original/file.js</example>
     <example>+++ b/path/to/original/file.js</example>
     <example>@@ -10,7 +10,7 @@</example>
-    <example>-old line</example>
-    <example>+new line</example>
-    <example>```</example>
+    <example>-ligne originale</example>
+    <example>+ligne modifiée</example>
+    <example>&gt;&gt;&gt;</example>
   </examples>
 </format>
