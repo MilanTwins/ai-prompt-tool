@@ -77,10 +77,6 @@ def main():
         print("Error: The source directory is too high in the filesystem hierarchy. Aborting.")
         sys.exit(1)
 
-    user_input = input("Do you want to proceed? (y/n): ").strip().lower()
-    if user_input != "y":
-        print("Aborted by user.")
-        sys.exit(0)
 
     code_structure = []
     code_context_lines = []

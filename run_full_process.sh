@@ -21,19 +21,26 @@ for f in "${REQUIRED_CONFIG[@]}"; do
     fi
 done
 
-# We don't strictly require final_request.txt and template here because they should already exist
-if [ ! -f "config/final_request.txt" ]; then
-    echo "Warning: 'config/final_request.txt' not found. A default request will be used."
+if [ ! -d "config/formats" ]; then
+    echo "Error: 'config/formats' directory not found."
+    exit 1
 fi
 
+echo "Checking template file..."
 if [ ! -f "templates/prompt_template.jinja2" ]; then
     echo "Error: Template file 'templates/prompt_template.jinja2' not found."
     exit 1
 fi
 
+echo "Checking scripts..."
 if [ ! -f "scripts/generate_structure.py" ] || [ ! -f "scripts/generate_prompt.py" ]; then
-    echo "Error: generate_structure.py or generate_prompt.py not found in scripts."
+    echo "Error: One or both required scripts not found in 'scripts/' directory."
+    echo "Required: generate_structure.py and generate_prompt.py."
     exit 1
+fi
+
+if [ ! -f "config/final_request.txt" ]; then
+    echo "Warning: 'config/final_request.txt' not found. A default request will be used."
 fi
 
 SOURCE_DIR=$(python3 -c "import yaml;f=open('config/settings.yaml');data=yaml.safe_load(f);print(data['settings']['source_directory'])" 2>/dev/null || true)
@@ -44,12 +51,6 @@ fi
 ABS_SOURCE_DIR=$(cd "$SOURCE_DIR" && pwd)
 echo "We are about to scan the project source directory at: $ABS_SOURCE_DIR"
 
-read -p "Do you want to proceed? (y/n): " USER_INPUT
-if [ "$USER_INPUT" != "y" ]; then
-    echo "Aborted by user."
-    exit 0
-fi
-
 echo "Running generate_structure.py..."
 python3 scripts/generate_structure.py
 
@@ -59,7 +60,7 @@ if [ ! -f "data/code_structure.json" ]; then
 fi
 
 if [ ! -f "data/code_context.md" ]; then
-    echo "Warning: 'data/code_context.md' not found. Possibly no files included."
+    echo "Warning: 'data/code_context.md' not found. Possibly no files included or an error occurred."
 fi
 
 echo "Running generate_prompt.py..."
