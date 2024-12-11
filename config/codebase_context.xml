@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<codebase_context>
+  <files>
+    <file>
+      <path>frontend/src/pages/Home.js</path>
+      <description>Displays webcam feed, 'Let's Play' button, and language switcher at startup.</description>
+    </file>
+    <file>
+      <path>frontend/src/pages/ConsentModal.js</path>
+      <description>Handles legal consent before taking and saving photos.</description>
+    </file>
+    <file>
+      <path>frontend/src/pages/TutorialAndCountdown.js</path>
+      <description>Shows a countdown and tutorial overlay to guide user positioning before photo capture.</description>
+    </file>
+    <file>
+      <path>frontend/src/pages/PhotoValidation.js</path>
+      <description>Displays the captured photo, allowing confirmation or retaking.</description>
+    </file>
+    <file>
+      <path>frontend/src/pages/MainScreen.js</path>
+      <description>Main interface after initial photo validation, shows selected image, history of generated images, and item/category selection.</description>
+    </file>
+    <file>
+      <path>frontend/src/components/LanguageSwitcher.js</path>
+      <description>Allows user to switch languages at any time.</description>
+    </file>
+    <file>
+      <path>frontend/src/components/CategorySelector.js</path>
+      <description>Displays clothing categories and triggers a modal for item selection.</description>
+    </file>
+    <file>
+      <path>frontend/src/components/ClothesModal.js</path>
+      <description>Transparent modal listing available items for the selected category.</description>
+    </file>
+    <file>
+      <path>frontend/src/services/api.js</path>
+      <description>Handles communication with backend (Node.js/Express) for image saving and retrieval.</description>
+    </file>
+    <file>
+      <path>backend/src/routes/sessionRoutes.js</path>
+      <description>Defines routes for session creation, photo saving, and image retrieval.</description>
+    </file>
+    <file>
+      <path>backend/src/controllers/sessionController.js</path>
+      <description>Implements business logic for managing sessions and photos.</description>
+    </file>
+    <file>
+      <path>backend/src/services/imageGeneration.js</path>
+      <description>Interfaces with the image generation engine (AI) to create try-on outputs.</description>
+    </file>
+  </files>
+</codebase_context>

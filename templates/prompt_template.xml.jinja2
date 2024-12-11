@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prompt>
+  <project_instructions>
+    <project_name>{{ project_name }}</project_name>
+    <objectives>
+      {% for obj in objectives %}
+      <objective>{{ obj }}</objective>
+      {% endfor %}
+    </objectives>
+    <code_conventions>
+      <language_stack>
+        <frontend>{{ frontend_stack }}</frontend>
+        <backend>{{ backend_stack }}</backend>
+      </language_stack>
+      <directories_structure>
+        <frontend>{{ directories_frontend }}</frontend>
+        <backend>{{ directories_backend }}</backend>
+      </directories_structure>
+      <coding_style>
+        {% for rule in coding_style %}
+        <rule>{{ rule }}</rule>
+        {% endfor %}
+      </coding_style>
+    </code_conventions>
+    <privacy_and_legal>
+      {% for pl in privacy_and_legal %}
+      <item>{{ pl }}</item>
+      {% endfor %}
+    </privacy_and_legal>
+    <performance_and_architecture>
+      {% for pa in performance_and_arch %}
+      <item>{{ pa }}</item>
+      {% endfor %}
+    </performance_and_architecture>
+    <ux_guidelines>
+      {% for ux in ux_guidelines %}
+      <item>{{ ux }}</item>
+      {% endfor %}
+    </ux_guidelines>
+    <advertising>
+      {% for ad in advertising %}
+      <item>{{ ad }}</item>
+      {% endfor %}
+    </advertising>
+    <evolutivity>
+      {% for ev in evolutivity %}
+      <item>{{ ev }}</item>
+      {% endfor %}
+    </evolutivity>
+  </project_instructions>
+
+  <project_structure>
+    {{ code_structure | safe }}
+  </project_structure>
+
+  <codebase_context>
+    <files>
+    {% for f in files_info %}
+      <file>
+        <path>{{ f.find('path').text.strip() }}</path>
+        <description>{{ f.find('description').text.strip() }}</description>
+      </file>
+    {% endfor %}
+    </files>
+  </codebase_context>
+
+  <full_code_context>
+    <files>
+    {% for file_item in code_files %}
+      <file>
+        <path>{{ file_item.path }}</path>
+        <language>{{ file_item.language }}</language>
+        <lines>
+          {% for line in file_item.lines %}
+          <line number="{{ line.number }}">{{ line.text }}</line>
+          {% endfor %}
+        </lines>
+      </file>
+    {% endfor %}
+    </files>
+  </full_code_context>
+
+  <format>
+    <selected>{{ chosen_format }}</selected>
+    <instructions>
+      {% for instr in format_instructions %}
+      <instruction>{{ instr }}</instruction>
+      {% endfor %}
+    </instructions>
+    <examples>
+      {% for ex in format_examples %}
+      <example>{{ ex }}</example>
+      {% endfor %}
+    </examples>
+  </format>
+
+  <request>
+    {{ request }}
+  </request>
+</prompt>

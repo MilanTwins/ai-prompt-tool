@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<format>
+  <instructions>
+    <instruction>Use XML tags to structure your response.</instruction>
+    <instruction>Use &lt;code&gt; elements for code samples.</instruction>
+  </instructions>
+  <examples>
+    <example>&lt;example&gt;</example>
+    <example>  &lt;title&gt;Title&lt;/title&gt;</example>
+    <example>  &lt;list&gt;</example>
+    <example>    &lt;item&gt;Bullet point&lt;/item&gt;</example>
+    <example>  &lt;/list&gt;</example>
+    <example>&lt;/example&gt;</example>
+  </examples>
+</format>

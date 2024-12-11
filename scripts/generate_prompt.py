@@ -1,167 +1,123 @@
 #!/usr/bin/env python3
 import os
 import sys
-import yaml
-import json
+import xml.etree.ElementTree as ET
 from jinja2 import Environment, FileSystemLoader
+import yaml
 
-def load_yaml(file_path):
+def load_xml(file_path):
     if not os.path.exists(file_path):
-        return {}
-    with open(file_path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        return None
+    tree = ET.parse(file_path)
+    return tree.getroot()
 
-def load_json(file_path):
-    if not os.path.exists(file_path):
-        return {}
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+def get_text_from_xpath(root, xpath):
+    elem = root.find(xpath)
+    if elem is not None and elem.text:
+        return elem.text.strip()
+    return ""
 
-def load_text(file_path):
-    if not os.path.exists(file_path):
-        return ""
-    with open(file_path, "r", encoding="utf-8") as f:
-        return f.read()
+def get_list_from_xpath(root, xpath):
+    return [e.text.strip() for e in root.findall(xpath)]
 
-def format_instructions(project_instructions):
-    lines = []
-    if "project_name" in project_instructions:
-        lines.append(f"**Project Name:** {project_instructions['project_name']}\n")
-    if "objectives" in project_instructions:
-        lines.append("**Objectives:**")
-        for obj in project_instructions["objectives"]:
-            lines.append(f"- {obj}")
-        lines.append("")
-    if "code_conventions" in project_instructions:
-        lines.append("**Code Conventions:**")
-        cc = project_instructions["code_conventions"]
-        if "language_stack" in cc:
-            lines.append("Language Stack:")
-            for k,v in cc["language_stack"].items():
-                lines.append(f"- {k}: {v}")
-        if "directories_structure" in cc:
-            lines.append("Directories Structure:")
-            for k,v in cc["directories_structure"].items():
-                lines.append(f"- {k}: {v}")
-        if "coding_style" in cc:
-            lines.append("Coding Style:")
-            for rule in cc["coding_style"]:
-                lines.append(f"- {rule}")
-        lines.append("")
+def parse_code_context(root):
+    files_data = []
+    for f in root.findall("./file"):
+        path = f.get("path", "")
+        code_elem = f.find("./code")
+        language = code_elem.get("language", "none") if code_elem is not None else "none"
+        lines_data = []
+        if code_elem is not None:
+            for line_elem in code_elem.findall("./line"):
+                number = line_elem.get("number", "0")
+                text = line_elem.text if line_elem.text else ""
+                lines_data.append({'number': number, 'text': text})
+        files_data.append({
+            'path': path,
+            'language': language,
+            'lines': lines_data
+        })
+    return files_data
 
-    if "privacy_and_legal" in project_instructions:
-        lines.append("**Privacy and Legal:**")
-        for rule in project_instructions["privacy_and_legal"]:
-            lines.append(f"- {rule}")
-        lines.append("")
-
-    if "performance_and_architecture" in project_instructions:
-        lines.append("**Performance and Architecture:**")
-        for p in project_instructions["performance_and_architecture"]:
-            lines.append(f"- {p}")
-        lines.append("")
-
-    if "ux_guidelines" in project_instructions:
-        lines.append("**UX Guidelines:**")
-        for ux in project_instructions["ux_guidelines"]:
-            lines.append(f"- {ux}")
-        lines.append("")
-
-    if "advertising" in project_instructions:
-        lines.append("**Advertising:**")
-        for ad in project_instructions["advertising"]:
-            lines.append(f"- {ad}")
-        lines.append("")
-
-    if "evolutivity" in project_instructions:
-        lines.append("**Evolutivity:**")
-        for evo in project_instructions["evolutivity"]:
-            lines.append(f"- {evo}")
-        lines.append("")
-
-    return "\n".join(lines)
-
-def format_codebase_context(codebase_context):
-    lines = []
-    files = codebase_context.get("files", [])
-    if files:
-        lines.append("**Codebase Key Files Context:**")
-        for f_info in files:
-            path = f_info.get("path", "unknown path")
-            desc = f_info.get("description", "")
-            lines.append(f"- **{path}:** {desc}")
-    return "\n".join(lines)
-
-def load_format_instructions(chosen_format):
-    format_path = os.path.join("config", "formats", f"{chosen_format}.yaml")
-    data = load_yaml(format_path)
-    if not data:
-        # Format non trouvé ou fichier vide, fallback sur none
-        data = load_yaml(os.path.join("config", "formats", "none.yaml"))
-    lines = []
-    lines.append(f"**Selected Response Format:** {chosen_format}\n")
-    if "instructions" in data and data["instructions"]:
-        lines.append("Instructions:")
-        for instr in data["instructions"]:
-            lines.append(f"- {instr}")
-        lines.append("")
-    if "examples" in data and data["examples"]:
-        lines.append("Examples:")
-        for ex in data["examples"]:
-            lines.append(ex)
-        lines.append("")
-    return "\n".join(lines)
-
-def format_project_structure(code_structure):
-    if not code_structure:
-        return ""
-    lines = []
-    lines.append("**Project Structure (files included):**")
-    for item in code_structure:
-        lines.append(f"- {item['path']}")
-    return "\n".join(lines)
+def load_settings():
+    with open("config/settings.yaml", "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    source_directory = data.get("source_directory", ".")
+    exclude_patterns = data.get("exclude_patterns", [])
+    return source_directory, exclude_patterns
 
 def main():
-    project_instructions = load_yaml("config/project_instructions.yaml")
-    codebase_context = load_yaml("config/codebase_context.yaml")
-    code_structure = load_json("data/code_structure.json")
-    settings = load_yaml("config/settings.yaml")
+    if len(sys.argv) < 2:
+        print("Error: format argument missing.")
+        sys.exit(1)
 
-    code_context_full = load_text("data/code_context.md")
+    chosen_format = sys.argv[1].lower()
 
-    final_request = load_text("config/final_request.txt").strip()
-    if not final_request:
-        final_request = "Please explain the codebase."
+    project_instructions = load_xml("config/project_instructions.xml")
+    codebase_context = load_xml("config/codebase_context.xml")
+    # On n'utilise plus le settings en XML
+    # On charge juste pour valider le fonctionnement
+    source_directory, exclude_patterns = load_settings()
 
-    supported_formats = settings.get("settings", {}).get("supported_formats", ["markdown"])
+    final_request = load_xml("config/final_request.xml")
+    format_root = load_xml(f"config/formats/{chosen_format}.xml")
 
-    chosen_format = None
-    while True:
-        print("Formats disponibles :")
-        for f in supported_formats:
-            print(f"- {f}")
-        user_input = input("Veuillez saisir un format : ").strip().lower()
-        if user_input not in supported_formats:
-            print(f"Erreur : Le format '{user_input}' n'est pas supporté. Veuillez sélectionner un format valide.\n")
-        else:
-            chosen_format = user_input
-            break
+    code_files = []
+    if os.path.exists("data/code_context.xml"):
+        code_context_root = load_xml("data/code_context.xml")
+        if code_context_root is not None:
+            code_files = parse_code_context(code_context_root)
 
-    instructions_str = format_instructions(project_instructions)
-    codebase_context_str = format_codebase_context(codebase_context)
-    response_format_str = load_format_instructions(chosen_format)
-    project_structure_str = format_project_structure(code_structure)
+    code_structure = ""
+    if os.path.exists("data/code_structure.xml"):
+        with open("data/code_structure.xml", "r", encoding="utf-8") as f:
+            code_structure = f.read().strip()
+
+    project_name = get_text_from_xpath(project_instructions, "./project_name")
+    objectives = get_list_from_xpath(project_instructions, "./objectives/objective")
+    frontend_stack = get_text_from_xpath(project_instructions, "./code_conventions/language_stack/frontend")
+    backend_stack = get_text_from_xpath(project_instructions, "./code_conventions/language_stack/backend")
+    directories_frontend = get_text_from_xpath(project_instructions, "./code_conventions/directories_structure/frontend")
+    directories_backend = get_text_from_xpath(project_instructions, "./code_conventions/directories_structure/backend")
+    coding_style = get_list_from_xpath(project_instructions, "./code_conventions/coding_style/rule")
+    privacy_and_legal = get_list_from_xpath(project_instructions, "./privacy_and_legal/item")
+    performance_and_arch = get_list_from_xpath(project_instructions, "./performance_and_architecture/item")
+    ux_guidelines = get_list_from_xpath(project_instructions, "./ux_guidelines/item")
+    advertising = get_list_from_xpath(project_instructions, "./advertising/item")
+    evolutivity = get_list_from_xpath(project_instructions, "./evolutivity/item")
+
+    files_info = codebase_context.findall("./files/file")
+
+    request_text = get_text_from_xpath(final_request, "./request")
+    if not request_text:
+        request_text = "Please explain the codebase."
+
+    format_instructions = get_list_from_xpath(format_root, "./instructions/instruction")
+    format_examples = get_list_from_xpath(format_root, "./examples/example")
 
     env = Environment(loader=FileSystemLoader("templates"))
-    template = env.get_template("prompt_template.jinja2")
+    template = env.get_template("prompt_template.xml.jinja2")
 
     prompt = template.render(
-        instructions=instructions_str,
-        project_structure=project_structure_str,
-        codebase_context=codebase_context_str,
-        response_format=response_format_str,
-        request=final_request,
-        full_code_context=code_context_full
+        project_name=project_name,
+        objectives=objectives,
+        frontend_stack=frontend_stack,
+        backend_stack=backend_stack,
+        directories_frontend=directories_frontend,
+        directories_backend=directories_backend,
+        coding_style=coding_style,
+        privacy_and_legal=privacy_and_legal,
+        performance_and_arch=performance_and_arch,
+        ux_guidelines=ux_guidelines,
+        advertising=advertising,
+        evolutivity=evolutivity,
+        code_structure=code_structure,
+        files_info=files_info,
+        code_files=code_files,
+        request=request_text,
+        chosen_format=chosen_format,
+        format_instructions=format_instructions,
+        format_examples=format_examples
     )
 
     print(prompt)

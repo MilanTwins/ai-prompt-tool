@@ -1,25 +1,18 @@
 #!/usr/bin/env python3
 import os
-import json
-import yaml
 import fnmatch
 import sys
+import yaml
+import xml.etree.ElementTree as ET
 
 def load_settings():
-    """
-    Load settings from config/settings.yaml
-    """
-    settings_path = os.path.join("config", "settings.yaml")
-    if not os.path.exists(settings_path):
-        raise FileNotFoundError("settings.yaml not found in config directory.")
-    with open(settings_path, "r") as f:
-        settings = yaml.safe_load(f)
-    return settings["settings"]
+    with open("config/settings.yaml", "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    source_directory = data.get("source_directory", ".")
+    exclude_patterns = data.get("exclude_patterns", [])
+    return source_directory, exclude_patterns
 
 def is_excluded(path, exclude_patterns):
-    """
-    Check if a given path matches any of the exclude patterns.
-    """
     norm_path = path.replace("\\", "/")
     for pattern in exclude_patterns:
         if fnmatch.fnmatch(norm_path, pattern) or pattern in norm_path:
@@ -27,9 +20,6 @@ def is_excluded(path, exclude_patterns):
     return False
 
 def detect_language(extension):
-    """
-    Return a language name based on the file extension for code fencing in Markdown.
-    """
     lang_map = {
         ".js": "javascript",
         ".jsx": "javascript",
@@ -41,61 +31,41 @@ def detect_language(extension):
         ".json": "json",
         ".yaml": "yaml",
         ".yml": "yaml",
-        ".md": "markdown",
+        ".md": "markdown"
     }
     return lang_map.get(extension, "")
 
 def is_too_high_in_hierarchy(source_dir):
-    """
-    Check if the source directory is too high in the filesystem hierarchy.
-    For example, we might disallow scanning root '/' or '/home' directly.
-    
-    Customize this logic as needed:
-    - You could forbid scanning '/' or '/home'
-    - You could ensure the directory is not above a certain known project directory
-    """
-    # Example: Disallow scanning if source_directory is '/' or '/home' (too broad)
     forbidden_paths = ["/", "/home"]
     abs_source = os.path.abspath(source_dir)
-    if abs_source in forbidden_paths:
-        return True
-    
-    # You can add more logic if needed.
-    
-    return False
+    return abs_source in forbidden_paths
 
 def main():
-    # Load settings
-    settings = load_settings()
-    source_directory = settings.get("source_directory", "../my-project")
-    exclude_patterns = settings.get("exclude_patterns", [])
+    source_directory, exclude_patterns = load_settings()
 
     abs_source = os.path.abspath(source_directory)
     print(f"About to scan: {abs_source}")
 
     if is_too_high_in_hierarchy(source_directory):
-        print("Error: The source directory is too high in the filesystem hierarchy. Aborting.")
+        print("Error: The source directory is too high.")
         sys.exit(1)
 
+    code_structure = ET.Element("code_structure")
+    code_context = ET.Element("code_context")
 
-    code_structure = []
-    code_context_lines = []
-
-    # Ensure data directory exists
     if not os.path.exists("data"):
         os.makedirs("data")
 
     for root, dirs, files in os.walk(source_directory, topdown=True):
         dirs[:] = [d for d in dirs if not is_excluded(os.path.join(root, d), exclude_patterns)]
-
         for filename in files:
             full_path = os.path.join(root, filename)
             rel_path = os.path.relpath(full_path, source_directory)
-
             if is_excluded(rel_path, exclude_patterns):
                 continue
 
-            code_structure.append({"path": rel_path})
+            item = ET.SubElement(code_structure, "file")
+            item.text = rel_path
 
             _, ext = os.path.splitext(filename)
             code_lang = detect_language(ext)
@@ -104,21 +74,20 @@ def main():
                 with open(full_path, "r", encoding="utf-8", errors="ignore") as fc:
                     content = fc.read()
             except Exception as e:
-                content = f"Could not read file due to: {e}"
+                content = f"Could not read file: {e}"
 
-            code_context_lines.append(f"## File: {rel_path}\n\n")
-            if code_lang:
-                code_context_lines.append(f"```{code_lang}\n{content}\n```\n\n")
-            else:
-                code_context_lines.append(f"```\n{content}\n```\n\n")
+            file_elem = ET.SubElement(code_context, "file")
+            file_elem.set("path", rel_path)
+            code_block = ET.SubElement(file_elem, "code")
+            code_block.set("language", code_lang if code_lang else "none")
+            lines = content.split('\n')
+            for i, line in enumerate(lines, start=1):
+                line_elem = ET.SubElement(code_block, "line")
+                line_elem.set("number", str(i))
+                line_elem.text = line
 
-    # Write code_structure.json
-    with open("data/code_structure.json", "w", encoding="utf-8") as f:
-        json.dump(code_structure, f, indent=2)
-
-    # Write code_context.md
-    with open("data/code_context.md", "w", encoding="utf-8") as f:
-        f.writelines(code_context_lines)
+    ET.ElementTree(code_structure).write("data/code_structure.xml", encoding="utf-8", xml_declaration=True)
+    ET.ElementTree(code_context).write("data/code_context.xml", encoding="utf-8", xml_declaration=True)
 
     print("Code structure and context generated successfully.")
 

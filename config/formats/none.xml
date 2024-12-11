@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<format>
+  <instructions>
+    <instruction>No specific formatting.</instruction>
+  </instructions>
+  <examples>
+    <example>Just plain text without special formatting.</example>
+  </examples>
+</format>

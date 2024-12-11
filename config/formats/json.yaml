@@ -1,8 +1,0 @@
-instructions:
-  - "Use JSON formatting."
-  - "Present keys and values in a JSON structure."
-examples:
-  - "{"
-  - "  \"title\": \"Title\","
-  - "  \"items\": [\"Bullet point\"]"
-  - "}"

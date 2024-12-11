@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<format>
+  <instructions>
+    <instruction>Use Markdown syntax.</instruction>
+    <instruction>Include code blocks with ```language for code samples.</instruction>
+  </instructions>
+  <examples>
+    <example>**Example (Markdown)**</example>
+    <example>```markdown</example>
+    <example># Title</example>
+    <example>- Bullet point</example>
+    <example>```</example>
+  </examples>
+</format>

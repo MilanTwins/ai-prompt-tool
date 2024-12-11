@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<format>
+  <instructions>
+    <instruction>Use JSON formatting.</instruction>
+    <instruction>Present keys and values in a JSON structure.</instruction>
+  </instructions>
+  <examples>
+    <example>{</example>
+    <example>"title": "Title",</example>
+    <example>"items": ["Bullet point"]</example>
+    <example>}</example>
+  </examples>
+</format>
