@@ -1,24 +1,19 @@
 #!/usr/bin/env python3
 import os
 import sys
+import yaml
 import xml.etree.ElementTree as ET
 from jinja2 import Environment, FileSystemLoader
-import yaml
 
-def load_xml(file_path):
-    if not os.path.exists(file_path):
-        return None
-    tree = ET.parse(file_path)
-    return tree.getroot()
+def load_yaml_config():
+    with open("config/user_config.yaml", "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return data
 
-def get_text_from_xpath(root, xpath):
-    elem = root.find(xpath)
-    if elem is not None and elem.text:
-        return elem.text.strip()
-    return ""
-
-def get_list_from_xpath(root, xpath):
-    return [e.text.strip() for e in root.findall(xpath)]
+def load_final_request():
+    with open("config/final_request.yaml", "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return data.get("final_request", "Please explain the codebase.")
 
 def parse_code_context(root):
     files_data = []
@@ -39,82 +34,93 @@ def parse_code_context(root):
         })
     return files_data
 
-def load_settings():
-    with open("config/settings.yaml", "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f)
-    source_directory = data.get("source_directory", ".")
-    exclude_patterns = data.get("exclude_patterns", [])
-    return source_directory, exclude_patterns
-
 def main():
     if len(sys.argv) < 2:
         print("Error: format argument missing.")
         sys.exit(1)
 
     chosen_format = sys.argv[1].lower()
+    data = load_yaml_config()
+    final_request = load_final_request()
 
-    project_instructions = load_xml("config/project_instructions.xml")
-    codebase_context = load_xml("config/codebase_context.xml")
-    # On n'utilise plus le settings en XML
-    # On charge juste pour valider le fonctionnement
-    source_directory, exclude_patterns = load_settings()
+    # Extraire les infos du fichier YAML
+    project_instructions = data.get("project_instructions", {})
+    codebase_context = data.get("codebase_context", [])
 
-    final_request = load_xml("config/final_request.xml")
-    format_root = load_xml(f"config/formats/{chosen_format}.xml")
-
+    # Charger contextes générés
     code_files = []
-    if os.path.exists("data/code_context.xml"):
-        code_context_root = load_xml("data/code_context.xml")
-        if code_context_root is not None:
-            code_files = parse_code_context(code_context_root)
+    if os.path.exists("output/code_context.xml"):
+        root_cc = ET.parse("output/code_context.xml").getroot()
+        code_files = parse_code_context(root_cc)
 
     code_structure = ""
-    if os.path.exists("data/code_structure.xml"):
-        with open("data/code_structure.xml", "r", encoding="utf-8") as f:
+    if os.path.exists("output/code_structure.xml"):
+        with open("output/code_structure.xml", "r", encoding="utf-8") as f:
             code_structure = f.read().strip()
 
-    project_name = get_text_from_xpath(project_instructions, "./project_name")
-    objectives = get_list_from_xpath(project_instructions, "./objectives/objective")
-    frontend_stack = get_text_from_xpath(project_instructions, "./code_conventions/language_stack/frontend")
-    backend_stack = get_text_from_xpath(project_instructions, "./code_conventions/language_stack/backend")
-    directories_frontend = get_text_from_xpath(project_instructions, "./code_conventions/directories_structure/frontend")
-    directories_backend = get_text_from_xpath(project_instructions, "./code_conventions/directories_structure/backend")
-    coding_style = get_list_from_xpath(project_instructions, "./code_conventions/coding_style/rule")
-    privacy_and_legal = get_list_from_xpath(project_instructions, "./privacy_and_legal/item")
-    performance_and_arch = get_list_from_xpath(project_instructions, "./performance_and_architecture/item")
-    ux_guidelines = get_list_from_xpath(project_instructions, "./ux_guidelines/item")
-    advertising = get_list_from_xpath(project_instructions, "./advertising/item")
-    evolutivity = get_list_from_xpath(project_instructions, "./evolutivity/item")
+    # Extraire les données du projet
+    pn = project_instructions.get("project_name", "")
+    objs = project_instructions.get("objectives", [])
+    cc = project_instructions.get("code_conventions", {})
+    pl = project_instructions.get("privacy_and_legal", [])
+    pa = project_instructions.get("performance_and_architecture", [])
+    ux = project_instructions.get("ux_guidelines", [])
+    ad = project_instructions.get("advertising", [])
+    ev = project_instructions.get("evolutivity", [])
 
-    files_info = codebase_context.findall("./files/file")
+    # code_conventions détails
+    lang_stack = cc.get("language_stack", {})
+    dirs_stack = cc.get("directories_structure", {})
+    coding_style = cc.get("coding_style", [])
 
-    request_text = get_text_from_xpath(final_request, "./request")
-    if not request_text:
-        request_text = "Please explain the codebase."
+    frontend_stack = lang_stack.get("frontend", "")
+    backend_stack = lang_stack.get("backend", "")
+    directories_frontend = dirs_stack.get("frontend", "")
+    directories_backend = dirs_stack.get("backend", "")
 
-    format_instructions = get_list_from_xpath(format_root, "./instructions/instruction")
-    format_examples = get_list_from_xpath(format_root, "./examples/example")
+    # Construction de files_info comme précédemment
+    files_root = ET.Element("files")
+    for cf in codebase_context:
+        file_elem = ET.SubElement(files_root, "file")
+        p = ET.SubElement(file_elem, "path")
+        p.text = cf.get("path", "")
+        d = ET.SubElement(file_elem, "description")
+        d.text = cf.get("description", "")
+    files_info = files_root.findall("./file")
+
+    # Charger les instructions / exemples du format
+    format_file = f"config/formats/{chosen_format}.xml"
+    if not os.path.exists(format_file):
+        print("Format file not found.")
+        sys.exit(1)
+    format_root = ET.parse(format_file).getroot()
+
+    def get_list(root, xpath):
+        return [e.text.strip() for e in root.findall(xpath)]
+
+    format_instructions = get_list(format_root, "./instructions/instruction")
+    format_examples = get_list(format_root, "./examples/example")
 
     env = Environment(loader=FileSystemLoader("templates"))
     template = env.get_template("prompt_template.xml.jinja2")
 
     prompt = template.render(
-        project_name=project_name,
-        objectives=objectives,
+        project_name=pn,
+        objectives=objs,
         frontend_stack=frontend_stack,
         backend_stack=backend_stack,
         directories_frontend=directories_frontend,
         directories_backend=directories_backend,
         coding_style=coding_style,
-        privacy_and_legal=privacy_and_legal,
-        performance_and_arch=performance_and_arch,
-        ux_guidelines=ux_guidelines,
-        advertising=advertising,
-        evolutivity=evolutivity,
+        privacy_and_legal=pl,
+        performance_and_arch=pa,
+        ux_guidelines=ux,
+        advertising=ad,
+        evolutivity=ev,
         code_structure=code_structure,
         files_info=files_info,
         code_files=code_files,
-        request=request_text,
+        request=final_request,
         chosen_format=chosen_format,
         format_instructions=format_instructions,
         format_examples=format_examples

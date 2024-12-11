@@ -6,7 +6,7 @@ import yaml
 import xml.etree.ElementTree as ET
 
 def load_settings():
-    with open("config/settings.yaml", "r", encoding="utf-8") as f:
+    with open("config/user_config.yaml", "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
     source_directory = data.get("source_directory", ".")
     exclude_patterns = data.get("exclude_patterns", [])
@@ -53,8 +53,8 @@ def main():
     code_structure = ET.Element("code_structure")
     code_context = ET.Element("code_context")
 
-    if not os.path.exists("data"):
-        os.makedirs("data")
+    if not os.path.exists("output"):
+        os.makedirs("output")
 
     for root, dirs, files in os.walk(source_directory, topdown=True):
         dirs[:] = [d for d in dirs if not is_excluded(os.path.join(root, d), exclude_patterns)]
@@ -86,8 +86,8 @@ def main():
                 line_elem.set("number", str(i))
                 line_elem.text = line
 
-    ET.ElementTree(code_structure).write("data/code_structure.xml", encoding="utf-8", xml_declaration=True)
-    ET.ElementTree(code_context).write("data/code_context.xml", encoding="utf-8", xml_declaration=True)
+    ET.ElementTree(code_structure).write("output/code_structure.xml", encoding="utf-8", xml_declaration=True)
+    ET.ElementTree(code_context).write("output/code_context.xml", encoding="utf-8", xml_declaration=True)
 
     print("Code structure and context generated successfully.")
 
