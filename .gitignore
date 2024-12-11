@@ -18,8 +18,9 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Ignorer le répertoire d'output généré par les scripts
-output/
+# Ignorer le répertoire d'output généré par les scripts, sauf .gitkeep
+output/*
+!output/.gitkeep
 
 # Ignorer les répertoires courants dans les projets JS/Node
 node_modules/
