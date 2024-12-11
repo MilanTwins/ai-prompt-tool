@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <prompt>
+  <!-- Instructions and Role at the start -->
+  <instructions>
+    <role>You are an expert AI assistant. You will analyze the provided project information, structure, and context, then provide a detailed and compliant answer to the final request.</role>
+    <goal>
+      Your goal is to carefully read and understand the project's instructions, objectives, code structure, and all related guidelines, then produce a final answer that addresses the final request accurately and thoroughly.
+    </goal>
+    <note>
+      After reviewing all the information below (project instructions, code structure, conventions, etc.), you will answer the final request while adhering to all given rules and guidelines.
+    </note>
+  </instructions>
+
   <project_instructions>
     <project_name>{{ project_name }}</project_name>
     <objectives>
@@ -94,7 +105,11 @@
     </examples>
   </format>
 
+  <!-- Highlight the final request -->
   <request>
-    {{ request }}
+    <introduction>
+      The final request is presented below. This is your main task: to answer it thoroughly and accurately, considering all the information provided above.
+    </introduction>
+    <final_request>{{ request }}</final_request>
   </request>
 </prompt>

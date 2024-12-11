@@ -1,86 +1,94 @@
-project_name: "Nom du projet ici"
+project_name: "Immersive Try-On Kiosk"
 objectives:
-  - "Décrire objectif principal 1"
-  - "Décrire objectif principal 2"
-  - "Décrire objectif principal 3"
+  - "Provide an immersive and fluent user experience to virtually try on clothing."
+  - "Ensure a complete workflow: from initial photo capture to generating multiple try-on images."
+  - "Facilitate easy addition of new clothing categories, items, and languages."
 
 code_conventions:
   language_stack:
-    frontend: "Nom de la stack frontend (ex: React, Angular, Vue...)"
-    backend: "Nom de la stack backend (ex: Node.js, Express...)"
+    frontend: "React (ESModules, functional components)"
+    backend: "Node.js / Express"
   directories_structure:
-    frontend: "Chemins des répertoires frontend (ex: src/components, src/pages...)"
-    backend: "Chemins des répertoires backend (ex: src/routes, src/controllers...)"
+    frontend: "src/components, src/pages, src/services, src/styles"
+    backend: "src/routes, src.controllers, src=models, src=services"
   coding_style:
-    - "Règle de style 1"
-    - "Règle de style 2"
-    - "Règle de style 3"
-    - "Règle de style 4"
+    - "Follow ES6 conventions"
+    - "Write clean, well-commented, and readable code"
+    - "Separate business logic from presentation"
+    - "Use hooks and context for state management if necessary"
 
 multilingual:
-  - "Détail sur le support multilingue 1"
-  - "Détail sur le support multilingue 2"
-  - "Détail sur le support multilingue 3"
-  - "Détail sur le support multilingue 4"
+  - "Interface conçue pour supporter plusieurs langues."
+  - "Système de gestion des langues (fichiers de traduction, variables dynamiques)."
+  - "Indicateur (drapeau) visible pour changer de langue."
+  - "Changement de langue effectif immédiatement sur toute l’interface."
 
 user_journey:
-  - "Étape 1 de l'expérience utilisateur"
-  - "Étape 2 de l'expérience utilisateur"
-  - "... etc ..."
+  - "1. Écran d’accueil : webcam fullscreen + 'Let’s Play', drapeau langue, cadre positionnement."
+  - "2. Modal consentement légal : accepter/refuser sauvegarde photos."
+  - "3. Décompte (10s) + tutoriel (5s), photo prise à 0s."
+  - "4. Modal validation photo : confirmer ou reprendre. Si confirmé, session démarre (photo BDD)."
+  - "5. Écran principal : photo sélectionnée, historique vertical, barre horizontale catégories, modal vêtements, génération images."
+  - "6. Écran génération : barre progression (5s-1min), pub non-intrusive, retour écran principal."
+  - "7. Retour écran principal : nouvelle image sous l’originale, possibilité régénérer."
+  - "8. Fin session : modal numéro téléphone (SMS), terminer, retour accueil webcam."
 
 privacy_and_legal:
-  - "Règle de confidentialité ou légale 1"
-  - "Règle de confidentialité ou légale 2"
-  - "Règle de confidentialité ou légale 3"
+  - "Obtain explicit consent before capturing and saving photos"
+  - "Save each session and its associated images in the database"
+  - "No reuse of images outside the current session"
 
 performance_and_architecture:
-  - "Règle de performance/architecture 1"
-  - "Règle de performance/architecture 2"
-  - "Règle de performance/architecture 3"
+  - "Image generation should take between 5s and 1min max"
+  - "Only one user session at a time"
+  - "Maintain a clean, modular, and maintainable codebase"
 
 ux_guidelines:
-  - "Ligne directrice UX 1"
-  - "Ligne directrice UX 2"
-  - "Ligne directrice UX 3"
-  - "Ligne directrice UX 4"
-  - "Ligne directrice UX 5"
+  - "Fullscreen interface without global scroll"
+  - "Smooth navigation, visual and audio feedback"
+  - "Large buttons, clear text"
+  - "On-the-fly language switching"
+  - "Scrollable sidebars for history and item selection"
 
 advertising:
-  - "Règle sur la publicité (ex: pub non-intrusive pendant la génération)"
+  - "Display a non-intrusive ad during image generation"
 
 evolutivity:
-  - "Règle d'évolutivité 1"
-  - "Règle d'évolutivité 2"
+  - "Add new categories, items, and languages easily"
+  - "Maintain a code structure that supports future extensions"
 
 constraints_and_requirements:
   affichage_pleine_page:
-    - "Contrainte affichage fullscreen 1"
-    - "Contrainte affichage fullscreen 2"
+    - "Toujours fullscreen sans scroll global."
+    - "Barres d’historique et sélection scrollables."
   vue_webcam_immersive:
-    - "Contrainte vue webcam 1"
-    - "Contrainte vue webcam 2"
+    - "Webcam 100% écran accueil jusqu’à photo initiale."
+    - "Après validation, webcam disparaît, fullscreen réservé à l’image sélectionnée."
   confidentialite:
-    - "Contrainte confidentialité 1"
-    - "Contrainte confidentialité 2"
-    - "Contrainte confidentialité 3"
+    - "Toutes les photos en BDD."
+    - "Consentement explicite avant capture."
+    - "Photos utilisées uniquement dans la session courante."
   gestion_sessions:
-    - "Contrainte session 1"
-    - "Contrainte session 2"
+    - "Chaque photo initiale = nouvelle session."
+    - "Sessions précédentes inaccessibles."
   performances:
-    - "Contrainte performance 1"
-    - "Contrainte performance 2"
+    - "Génération 5s à 1min."
+    - "Une seule session à la fois."
   architecture_propre:
-    - "Contrainte architecture 1"
+    - "ESModules, répertoires dédiés."
+    - "Code commenté et lisible."
   publicite_generation:
-    - "Contrainte publicité 1"
+    - "Pub sous la barre de progression."
   experience_utilisateur_fluide:
-    - "Contrainte UX fluide 1"
-    - "Contrainte UX fluide 2"
-    - "Contrainte UX fluide 3"
+    - "Feedbacks visuels/sonores."
+    - "Boutons grands et clairs."
+    - "Multilingue à tout moment."
   evolutivite:
-    - "Contrainte évolutivité 1"
+    - "Ajout facile catégories, vêtements, langues."
 
 summary:
-  - "Résumé point clé 1"
-  - "Résumé point clé 2"
-  - "Résumé point clé 3"
+  - "Expérience immersive de try-on virtuel via webcam."
+  - "Sélection/génération d’images par catégorie."
+  - "Interface multilingue, réutilisation d’images générées."
+  - "Fin de session avec envoi SMS."
+  - "Respect confidentialité, performance, ergonomie."

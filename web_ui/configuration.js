@@ -1,49 +1,60 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  const configList = document.getElementById('configList');
-  const configContent = document.getElementById('configContent');
-  const refreshConfigsBtn = document.getElementById('refreshConfigsBtn');
-  const templateSelect = document.getElementById('templateSelect');
-  const newConfigName = document.getElementById('newConfigName');
-  const createConfigBtn = document.getElementById('createConfigBtn');
-  const backBtn = document.getElementById('backBtn');
-
   const projectDataSelect = document.getElementById('projectDataSelect');
   const userConfigSelect = document.getElementById('userConfigSelect');
   const saveSelectionBtn = document.getElementById('saveSelectionBtn');
+  const backBtn = document.getElementById('backBtn');
 
-  // Charger les templates de configuration
-  async function loadTemplates() {
-    const response = await fetch('/api/templates');
-    if (!response.ok) return;
-    const templates = await response.json();
-    templateSelect.innerHTML = '';
-    templates.forEach(t => {
-      const opt = document.createElement('option');
-      opt.value = t;
-      opt.textContent = t;
-      templateSelect.appendChild(opt);
+  let selectedProjectData = null;
+  let selectedUserConfig = null;
+
+  // Cette fonction charge les valeurs par défaut depuis user_config.yaml
+  // et extrait les valeurs de selected_project_data et selected_user_config.
+  async function loadDefaultSelections() {
+    const response = await fetch('/api/getConfigContent', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name: 'user_config.yaml' })
     });
+
+    if(!response.ok) {
+      console.error("Impossible de charger user_config.yaml");
+      return;
+    }
+
+    const txt = await response.text();
+
+    // On cherche des lignes du type : selected_project_data: projet_data.yaml
+    // ou selected_project_data: "projet_data.yaml"
+    // Pareil pour selected_user_config
+    // On va utiliser une regex plus flexible.
+    const spdMatch = txt.match(/selected_project_data:\s*"?([^"]+)"?/);
+    const sucMatch = txt.match(/selected_user_config:\s*"?([^"]+)"?/);
+
+    selectedProjectData = spdMatch ? spdMatch[1].trim() : null;
+    selectedUserConfig = sucMatch ? sucMatch[1].trim() : null;
+
+    console.log("Valeurs par défaut extraites :", {selectedProjectData, selectedUserConfig});
   }
 
-  // Lister les fichiers de config
+  // Lister les fichiers de config (en excluant final_request.yaml)
+  // user_config.yaml doit être présent dans la liste, ainsi que project_data.yaml, etc.
   async function loadConfigs() {
     const response = await fetch('/api/listConfigs');
-    if(!response.ok) return;
+    if(!response.ok) {
+      console.error("Impossible de charger la liste des configs");
+      return;
+    }
     const data = await response.json();
-    configList.innerHTML = '';
 
-    // Nettoyage des selects
+    // Exclure final_request.yaml
+    const filteredConfigs = data.configs.filter(c => c !== 'final_request.yaml');
+
+    console.log("Liste des configs disponibles (sans final_request.yaml) :", filteredConfigs);
+
     projectDataSelect.innerHTML = '';
     userConfigSelect.innerHTML = '';
 
-    data.configs.forEach(c => {
-      const item = document.createElement('div');
-      item.classList.add('dir-item');
-      item.textContent = c;
-      item.addEventListener('click', () => loadConfigContent(c));
-      configList.appendChild(item);
-
-      // Ajouter options dans les selects
+    filteredConfigs.forEach(c => {
       const pdOpt = document.createElement('option');
       pdOpt.value = c;
       pdOpt.textContent = c;
@@ -54,59 +65,38 @@ document.addEventListener('DOMContentLoaded', async () => {
       ucOpt.textContent = c;
       userConfigSelect.appendChild(ucOpt);
     });
-  }
 
-  async function loadConfigContent(name) {
-    const response = await fetch('/api/getConfigContent', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ name })
-    });
-    if(!response.ok) return;
-    const txt = await response.text();
-    configContent.textContent = txt;
-  }
-
-  async function createConfig() {
-    const tpl = templateSelect.value;
-    const filename = newConfigName.value.trim();
-    if(!filename) {
-      alert("Veuillez entrer un nom de fichier.");
-      return;
+    // Appliquer les valeurs par défaut si elles existent et font partie de la liste
+    if (selectedProjectData && filteredConfigs.includes(selectedProjectData)) {
+      projectDataSelect.value = selectedProjectData;
     }
-    const response = await fetch('/api/createConfig', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ template: tpl, name: filename })
-    });
-    if(response.ok) {
-      alert("Configuration créée !");
-      await loadConfigs();
-    } else {
-      alert("Erreur lors de la création.");
+
+    if (selectedUserConfig && filteredConfigs.includes(selectedUserConfig)) {
+      userConfigSelect.value = selectedUserConfig;
     }
+
+    // Afficher un message dans la console pour confirmer
+    console.log("Sélecteurs positionnés :",
+      "projectDataSelect =", projectDataSelect.value,
+      "userConfigSelect =", userConfigSelect.value
+    );
   }
 
-  // Fonction pour enregistrer la sélection du project_data et user_config
-  // On va supposer qu’on met à jour config/user_config.yaml pour y stocker les choix.
   async function saveSelection() {
-    const selectedProjectData = projectDataSelect.value;
-    const selectedUserConfig = userConfigSelect.value;
+    const projDataFile = projectDataSelect.value;
+    const userConfFile = userConfigSelect.value;
 
-    if(!selectedProjectData || !selectedUserConfig) {
+    if(!projDataFile || !userConfFile) {
       alert("Veuillez sélectionner un project_data et un user_config.");
       return;
     }
 
-    // On va lire le contenu de user_config.yaml, puis le mettre à jour.
-    // Pour cela, on utilise un nouvel endpoint /api/updateSelectedConfigs (à créer si non existant)
-    // Ici, on supposera que cet endpoint est déjà implémenté coté serveur.
     const response = await fetch('/api/updateSelectedConfigs', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        project_data_file: selectedProjectData,
-        user_config_file: selectedUserConfig
+        project_data_file: projDataFile,
+        user_config_file: userConfFile
       })
     });
 
@@ -117,13 +107,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  refreshConfigsBtn.addEventListener('click', loadConfigs);
-  createConfigBtn.addEventListener('click', createConfig);
   backBtn.addEventListener('click', () => {
     window.location.href = 'index.html';
   });
+
   saveSelectionBtn.addEventListener('click', saveSelection);
 
-  await loadTemplates();
+  // Charger d'abord les valeurs par défaut, puis la liste des fichiers
+  await loadDefaultSelections();
   await loadConfigs();
 });
