@@ -1,4 +1,9 @@
+# example_project_data.yaml
+# Ce fichier montre comment organiser les données du projet.
+# L'objectif est de définir le nom du projet, les objectifs, les conventions de code, etc.
+
 project_name: "Nom du projet ici"
+
 objectives:
   - "Décrire objectif principal 1"
   - "Décrire objectif principal 2"
@@ -16,17 +21,6 @@ code_conventions:
     - "Règle de style 2"
     - "Règle de style 3"
     - "Règle de style 4"
-
-multilingual:
-  - "Détail sur le support multilingue 1"
-  - "Détail sur le support multilingue 2"
-  - "Détail sur le support multilingue 3"
-  - "Détail sur le support multilingue 4"
-
-user_journey:
-  - "Étape 1 de l'expérience utilisateur"
-  - "Étape 2 de l'expérience utilisateur"
-  - "... etc ..."
 
 privacy_and_legal:
   - "Règle de confidentialité ou légale 1"
@@ -51,36 +45,3 @@ advertising:
 evolutivity:
   - "Règle d'évolutivité 1"
   - "Règle d'évolutivité 2"
-
-constraints_and_requirements:
-  affichage_pleine_page:
-    - "Contrainte affichage fullscreen 1"
-    - "Contrainte affichage fullscreen 2"
-  vue_webcam_immersive:
-    - "Contrainte vue webcam 1"
-    - "Contrainte vue webcam 2"
-  confidentialite:
-    - "Contrainte confidentialité 1"
-    - "Contrainte confidentialité 2"
-    - "Contrainte confidentialité 3"
-  gestion_sessions:
-    - "Contrainte session 1"
-    - "Contrainte session 2"
-  performances:
-    - "Contrainte performance 1"
-    - "Contrainte performance 2"
-  architecture_propre:
-    - "Contrainte architecture 1"
-  publicite_generation:
-    - "Contrainte publicité 1"
-  experience_utilisateur_fluide:
-    - "Contrainte UX fluide 1"
-    - "Contrainte UX fluide 2"
-    - "Contrainte UX fluide 3"
-  evolutivite:
-    - "Contrainte évolutivité 1"
-
-summary:
-  - "Résumé point clé 1"
-  - "Résumé point clé 2"
-  - "Résumé point clé 3"

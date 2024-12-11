@@ -2,23 +2,17 @@
 <format>
   <selected>gpt</selected>
   <instructions>
-    <!-- Instructions pour l'IA :
-         - Réponse concise, quelques points principaux.
-         - Ton clair, pas trop détaillé.
-         - Si des commandes doivent être exécutées, les indiquer directement.
-         - Si des modifications de code sont nécessaires, fournir impérativement le code complet
-           du ou des fichiers modifiés, avec le chemin exact, et veiller à ce que le code mis à jour soit complet et cohérent.
-         - L'IA doit analyser précisément les changements demandés et les refléter fidèlement dans le code fourni. -->
-    <instruction>La réponse doit être concise et présenter simplement quelques points principaux.</instruction>
-    <instruction>Utiliser un ton clair et direct, sans entrer dans trop de détails.</instruction>
-    <instruction>Si des commandes doivent être exécutées, indiquer directement ces commandes dans la réponse, afin de rendre l'utilisation plus simple.</instruction>
-    <instruction>Si des modifications de code sont nécessaires, fournir le code complet du fichier modifié, avec le nom et l’emplacement du fichier, et s’assurer que le code soit complet, cohérent, et reflète fidèlement les changements demandés.</instruction>
+    <instruction>Fournir une réponse claire, détaillée, et exhaustive, couvrant tous les points demandés.</instruction>
+    <instruction>Inclure toutes les commandes nécessaires à l'application des modifications.</instruction>
+    <instruction>Pour toute modification de code, fournir le fichier complet, avec le chemin, et le code entièrement mis à jour.</instruction>
+    <instruction>S'assurer que les modifications codées correspondent exactement aux demandes formulées, sans approximation.</instruction>
+    <instruction>Ne pas se limiter à quelques points : expliquer toutes les étapes, raisons et conséquences des changements, sans être inutilement verbeux.</instruction>
   </instructions>
   <examples>
-    <example>• Point principal 1</example>
-    <example>• Point principal 2</example>
-    <example>• Point principal 3</example>
+    <example>• Point principal 1, explication détaillée, code mis à jour, commandes si nécessaires.</example>
+    <example>• Point principal 2, contexte, justification, et code complet.</example>
     <example>Si besoin d'une commande, l'indiquer : "Exécutez : `git commit -m 'message'`"</example>
-    <example>Si besoin de modifier du code, lister chaque fichier, son chemin, et donner tout le code mis à jour.</example>
+    <example>Si besoin de modifier du code, lister chaque fichier, donner son chemin, et fournir le code complet mis à jour.</example>
+    <example>Ne pas hésiter à donner plus d'informations si cela clarifie la mise en œuvre.</example>
   </examples>
 </format>

@@ -7,15 +7,17 @@ from jinja2 import Environment, FileSystemLoader
 
 def load_user_config():
     with open("config/user_config.yaml", "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        return yaml.load(f, Loader=yaml.SafeLoader)
 
 def load_project_data():
-    with open("config/project_data.yaml", "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+    user_conf = load_user_config()
+    project_data_file = user_conf.get("selected_project_data", "project_data.yaml")
+    with open(f"config/{project_data_file}", "r", encoding="utf-8") as f:
+        return yaml.load(f, Loader=yaml.SafeLoader)
 
 def load_final_request():
     with open("config/final_request.yaml", "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f)
+        data = yaml.load(f, Loader=yaml.SafeLoader)
     return data.get("final_request", "Please explain the codebase.")
 
 def parse_code_context(root):

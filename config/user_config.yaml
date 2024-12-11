@@ -1,4 +1,4 @@
-source_directory: "/home/ilan/code/ai-promp-tool"
+source_directory: /home/ilan/code/ai-promp-tool
 exclude_patterns:
   - data
   - .git
@@ -13,13 +13,15 @@ exclude_patterns:
   - coverage
   - .cache
   - out
-  - "*.log"
-  - ".DS_Store"
-  - "Thumbs.db"
-  - ".env"
-  - ".env.*"
-  - "yarn.lock"
-  - "package-lock.json"
-  - "*.tmp"
-  - "*.bak"
-  - "*.swp"
+  - '*.log'
+  - .DS_Store
+  - Thumbs.db
+  - .env
+  - .env.*
+  - yarn.lock
+  - package-lock.json
+  - '*.tmp'
+  - '*.bak'
+  - '*.swp'
+selected_project_data: project_data.yaml
+selected_user_config: user_config.yaml

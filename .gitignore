@@ -37,3 +37,6 @@ data/
 .idea/
 .vscode/
 .husky/
+
+# Ignorer les fichiers de configuration perso
+perso/

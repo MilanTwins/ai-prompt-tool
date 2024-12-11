@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Configuration Management</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="container">
+    <h1>Configuration Management</h1>
+    <div class="settings">
+      <h2>Configurations Disponibles</h2>
+      <div id="configList"></div>
+      <button id="refreshConfigsBtn">Rafraîchir</button>
+    </div>
+    <div class="output">
+      <h2>Contenu du fichier sélectionné</h2>
+      <pre id="configContent"></pre>
+    </div>
+
+    <div class="settings">
+      <h2>Créer une nouvelle configuration</h2>
+      <select id="templateSelect"></select>
+      <input type="text" id="newConfigName" placeholder="Nom du nouveau fichier"/>
+      <button id="createConfigBtn">Créer</button>
+    </div>
+
+    <div class="settings">
+      <h2>Sélection des fichiers pour générer le prompt</h2>
+      <p>Choisissez les fichiers à utiliser comme base :</p>
+      <label for="projectDataSelect">Fichier project_data:</label>
+      <select id="projectDataSelect"></select>
+
+      <label for="userConfigSelect">Fichier user_config:</label>
+      <select id="userConfigSelect"></select>
+
+      <button id="saveSelectionBtn">Enregistrer les choix</button>
+
+      <h3>Exemples de fichiers</h3>
+      <p>
+        <a href="../config/templates/example_project_data.yaml" target="_blank">Exemple project_data.yaml</a><br/>
+        <a href="../config/templates/example_user_config.yaml" target="_blank">Exemple user_config.yaml</a>
+      </p>
+    </div>
+
+    <button id="backBtn">Retour à la page principale</button>
+  </div>
+  <script src="configuration.js"></script>
+</body>
+</html>

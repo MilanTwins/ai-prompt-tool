@@ -157,3 +157,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     alert("Prompt copié dans le presse-papiers !");
   });
 });
+
+const configPageBtn = document.getElementById('configPageBtn');
+configPageBtn.addEventListener('click', () => {
+  window.location.href = 'configuration.html';
+});

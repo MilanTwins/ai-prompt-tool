@@ -1,0 +1,14 @@
+# example_user_config.yaml
+# Ce fichier montre comment définir le répertoire source, les patterns d'exclusion,
+# et stocker des informations sur les fichiers de configuration sélectionnés.
+
+source_directory: "/chemin/vers/le/projet"
+exclude_patterns:
+  - ".git"
+  - "node_modules"
+  - ".env"
+  # Ajouter d'autres patterns d'exclusion selon les besoins
+
+# Champs pour stocker la sélection de l'utilisateur :
+selected_project_data: "project_data.yaml"  # Nom du fichier sélectionné pour project_data
+selected_user_config: "user_config.yaml"    # Nom du fichier sélectionné pour user_config
