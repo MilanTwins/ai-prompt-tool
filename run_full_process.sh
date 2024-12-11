@@ -87,3 +87,29 @@ echo "Character count: $CHAR_COUNT"
 echo "Estimated tokens (approx): $TOKEN_ESTIMATE"
 echo "----------------------------------------"
 echo "Process completed successfully."
+
+
+# Après la génération du prompt
+if [ -f "output/final_prompt.xml" ]; then
+    # Détection de l'OS et copie automatique
+    # Exemple simple (à adapter selon vos besoins) :
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS
+        cat output/final_prompt.xml | pbcopy
+        echo "Prompt copied to clipboard (macOS)."
+    elif command -v xclip &> /dev/null; then
+        # Linux avec xclip installé
+        cat output/final_prompt.xml | xclip -selection clipboard
+        echo "Prompt copied to clipboard (Linux via xclip)."
+    elif command -v wl-copy &> /dev/null; then
+        # Linux avec wl-copy (Wayland)
+        cat output/final_prompt.xml | wl-copy
+        echo "Prompt copied to clipboard (Linux via wl-copy)."
+    elif [[ "$OSTYPE" == "msys"* || "$OSTYPE" == "cygwin"* ]]; then
+        # Windows (Git Bash, Cygwin) / PowerShell
+        cat output/final_prompt.xml | clip
+        echo "Prompt copied to clipboard (Windows)."
+    else
+        echo "No known clipboard utility found. Please install xclip/wl-copy or use pbcopy/clip."
+    fi
+fi

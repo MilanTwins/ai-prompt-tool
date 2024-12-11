@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<format>
+  <selected>gpt</selected>
+  <instructions>
+    <!-- Instructions pour l'IA :
+         - Réponse concise, quelques points principaux.
+         - Ton clair, pas trop détaillé.
+         - Si des commandes doivent être exécutées, les indiquer directement.
+         - Si des modifications de code sont nécessaires, fournir impérativement le code complet
+           du ou des fichiers modifiés, avec le chemin exact, et veiller à ce que le code mis à jour soit complet et cohérent.
+         - L'IA doit analyser précisément les changements demandés et les refléter fidèlement dans le code fourni. -->
+    <instruction>La réponse doit être concise et présenter simplement quelques points principaux.</instruction>
+    <instruction>Utiliser un ton clair et direct, sans entrer dans trop de détails.</instruction>
+    <instruction>Si des commandes doivent être exécutées, indiquer directement ces commandes dans la réponse, afin de rendre l'utilisation plus simple.</instruction>
+    <instruction>Si des modifications de code sont nécessaires, fournir le code complet du fichier modifié, avec le nom et l’emplacement du fichier, et s’assurer que le code soit complet, cohérent, et reflète fidèlement les changements demandés.</instruction>
+  </instructions>
+  <examples>
+    <example>• Point principal 1</example>
+    <example>• Point principal 2</example>
+    <example>• Point principal 3</example>
+    <example>Si besoin d'une commande, l'indiquer : "Exécutez : `git commit -m 'message'`"</example>
+    <example>Si besoin de modifier du code, lister chaque fichier, son chemin, et donner tout le code mis à jour.</example>
+  </examples>
+</format>

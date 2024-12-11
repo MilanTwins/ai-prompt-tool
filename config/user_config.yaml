@@ -1,4 +1,4 @@
-source_directory: "."
+source_directory: "/home/ilan/code/ai-promp-tool"
 exclude_patterns:
   - data
   - .git

@@ -1,0 +1,16 @@
+{
+  "name": "ai-promp-tool",
+  "version": "1.0.0",
+  "description": "## Présentation du projet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "js-yaml": "^4.1.0"
+  }
+}
