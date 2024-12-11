@@ -1,0 +1,4 @@
+repense la logique car pour le moment meme quand je selectionne un format il n'est pas correctement copie dans la partie :
+# Expected Response Format
+du fichier f inal_prompt. 
+Le probleme vient peut etre du fait que il y a un seul fichier de format pour tout les types de formats ce qui complique le tout. 

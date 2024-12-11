@@ -1,0 +1,34 @@
+# Node.js / JavaScript / React related
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+out/
+*.log
+yarn.lock
+package-lock.json
+
+# Python related
+venv/
+*.pyc
+__pycache__/
+
+# Environnements et fichiers sensibles
+.env
+.env.*
+*.bak
+*.swp
+*.tmp
+
+# Systèmes d'exploitation
+.DS_Store
+Thumbs.db
+
+# Données générées par les scripts
+data/code_structure.json
+data/code_context.md
+data/final_prompt.txt
+
+# Tout autre fichier temporaire
+*.tmp

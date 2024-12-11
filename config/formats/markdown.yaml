@@ -1,0 +1,9 @@
+instructions:
+  - "Use Markdown syntax."
+  - "Include code blocks with ```language for code samples."
+examples:
+  - "**Example (Markdown)**"
+  - "```markdown"
+  - "# Title"
+  - "- Bullet point"
+  - "```"

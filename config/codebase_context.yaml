@@ -1,0 +1,25 @@
+files:
+  - path: frontend/src/pages/Home.js
+    description: "Displays webcam feed, 'Let's Play' button, and language switcher at startup."
+  - path: frontend/src/pages/ConsentModal.js
+    description: "Handles legal consent before taking and saving photos."
+  - path: frontend/src/pages/TutorialAndCountdown.js
+    description: "Shows a countdown and tutorial overlay to guide user positioning before photo capture."
+  - path: frontend/src/pages/PhotoValidation.js
+    description: "Displays the captured photo, allowing confirmation or retaking."
+  - path: frontend/src/pages/MainScreen.js
+    description: "Main interface after initial photo validation, shows selected image, history of generated images, and item/category selection."
+  - path: frontend/src/components/LanguageSwitcher.js
+    description: "Allows user to switch languages at any time."
+  - path: frontend/src/components/CategorySelector.js
+    description: "Displays clothing categories and triggers a modal for item selection."
+  - path: frontend/src/components/ClothesModal.js
+    description: "Transparent modal listing available items for the selected category."
+  - path: frontend/src/services/api.js
+    description: "Handles communication with backend (Node.js/Express) for image saving and retrieval."
+  - path: backend/src/routes/sessionRoutes.js
+    description: "Defines routes for session creation, photo saving, and image retrieval."
+  - path: backend/src/controllers/sessionController.js
+    description: "Implements business logic for managing sessions and photos."
+  - path: backend/src/services/imageGeneration.js
+    description: "Interfaces with the image generation engine (AI) to create try-on outputs."

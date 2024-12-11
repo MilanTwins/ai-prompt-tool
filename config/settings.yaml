@@ -1,0 +1,31 @@
+settings:
+  source_directory: "."
+  exclude_patterns:
+    - "data"
+    - ".git"
+    - ".github"
+    - ".vscode"
+    - ".idea"
+    - ".husky"
+    - "venv"
+    - "node_modules"
+    - "dist"
+    - "build"
+    - "coverage"
+    - ".cache"
+    - "out"
+    - "*.log"
+    - ".DS_Store"
+    - "Thumbs.db"
+    - ".env"
+    - ".env.*"
+    - "yarn.lock"
+    - "package-lock.json"
+    - "*.tmp"
+    - "*.bak"
+    - "*.swp"
+  supported_formats:
+    - markdown
+    - xml
+    - json
+    - none
