@@ -5,10 +5,13 @@ import yaml
 import xml.etree.ElementTree as ET
 from jinja2 import Environment, FileSystemLoader
 
-def load_yaml_config():
+def load_user_config():
     with open("config/user_config.yaml", "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f)
-    return data
+        return yaml.safe_load(f)
+
+def load_project_data():
+    with open("config/project_data.yaml", "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
 
 def load_final_request():
     with open("config/final_request.yaml", "r", encoding="utf-8") as f:
@@ -40,12 +43,9 @@ def main():
         sys.exit(1)
 
     chosen_format = sys.argv[1].lower()
-    data = load_yaml_config()
-    final_request = load_final_request()
 
-    # Extraire les infos du fichier YAML
-    project_instructions = data.get("project_instructions", {})
-    codebase_context = data.get("codebase_context", [])
+    project_data = load_project_data()
+    final_request = load_final_request()
 
     # Charger contextes générés
     code_files = []
@@ -59,16 +59,16 @@ def main():
             code_structure = f.read().strip()
 
     # Extraire les données du projet
-    pn = project_instructions.get("project_name", "")
-    objs = project_instructions.get("objectives", [])
-    cc = project_instructions.get("code_conventions", {})
-    pl = project_instructions.get("privacy_and_legal", [])
-    pa = project_instructions.get("performance_and_architecture", [])
-    ux = project_instructions.get("ux_guidelines", [])
-    ad = project_instructions.get("advertising", [])
-    ev = project_instructions.get("evolutivity", [])
+    pn = project_data.get("project_name", "")
+    objs = project_data.get("objectives", [])
+    cc = project_data.get("code_conventions", {})
+    pl = project_data.get("privacy_and_legal", [])
+    pa = project_data.get("performance_and_architecture", [])
+    ux = project_data.get("ux_guidelines", [])
+    ad = project_data.get("advertising", [])
+    ev = project_data.get("evolutivity", [])
+    codebase_context = project_data.get("codebase_context", [])
 
-    # code_conventions détails
     lang_stack = cc.get("language_stack", {})
     dirs_stack = cc.get("directories_structure", {})
     coding_style = cc.get("coding_style", [])
@@ -78,7 +78,7 @@ def main():
     directories_frontend = dirs_stack.get("frontend", "")
     directories_backend = dirs_stack.get("backend", "")
 
-    # Construction de files_info comme précédemment
+    # Construire files_info à partir de codebase_context
     files_root = ET.Element("files")
     for cf in codebase_context:
         file_elem = ET.SubElement(files_root, "file")
@@ -88,7 +88,6 @@ def main():
         d.text = cf.get("description", "")
     files_info = files_root.findall("./file")
 
-    # Charger les instructions / exemples du format
     format_file = f"config/formats/{chosen_format}.xml"
     if not os.path.exists(format_file):
         print("Format file not found.")

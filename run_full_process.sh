@@ -16,6 +16,11 @@ if [ ! -f "config/user_config.yaml" ]; then
     exit 1
 fi
 
+if [ ! -f "config/project_data.yaml" ]; then
+    echo "Error: 'config/project_data.yaml' not found."
+    exit 1
+fi
+
 if [ ! -f "config/final_request.yaml" ]; then
     echo "Error: 'config/final_request.yaml' not found."
     exit 1

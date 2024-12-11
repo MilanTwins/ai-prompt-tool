@@ -18,7 +18,7 @@
       </language_stack>
       <directories_structure>
         <frontend>src/components, src/pages, src/services, src/styles</frontend>
-        <backend>src/routes, src/controllers, src=models, src=services</backend>
+        <backend>src/routes, src.controllers, src=models, src=services</backend>
       </directories_structure>
       <coding_style>
         
@@ -160,153 +160,215 @@
           
           <line number="2"></line>
           
-          <line number="3">## Project Overview</line>
+          <line number="3">## Présentation du projet</line>
           
           <line number="4"></line>
           
-          <line number="5">The AI Prompt Tool is a sophisticated system designed to generate structured prompts for AI models. It analyzes a given codebase, extracts relevant information, and creates a comprehensive prompt that includes project instructions, structure, context, and specific requests.</line>
+          <line number="5">L'AI Prompt Tool est un outil permettant de générer des prompts structurés et complets à partir d'un codebase. Le but est d'offrir à l'utilisateur (par exemple un développeur ou un data scientist) un moyen cohérent et automatisé de créer un contexte riche destiné à un modèle d'IA (comme ChatGPT), afin de faciliter l'analyse, le conseil, le refactoring, ou l'explication du code.</line>
           
           <line number="6"></line>
           
-          <line number="7">## Project Structure</line>
+          <line number="7">## Fonctionnalités principales</line>
           
           <line number="8"></line>
           
-          <line number="9">The project is organized into the following main components:</line>
+          <line number="9">- **Analyse du code source** : Le script scanne votre répertoire de code, en extrait la structure, les chemins de fichiers et leur contenu.</line>
           
-          <line number="10"></line>
+          <line number="10">- **Consolidation d'information** : Le projet s'appuie sur un fichier de configuration global (`config/user_config.yaml`) pour centraliser les paramètres (répertoire source, patterns d'exclusion, instructions du projet, contexte, etc.) et un fichier séparé pour la requête finale (`config/final_request.yaml`).</line>
           
-          <line number="11">- `config/`: Contains configuration files for project instructions, codebase context, settings, and formats.</line>
+          <line number="11">- **Génération d'un prompt complet** : À partir des informations fournies dans les YAML de configuration et des données extraites du code source, l'outil produit un prompt final au format XML. Ce prompt inclut :</line>
           
-          <line number="12">- `data/`: Stores generated data such as code structure, context, and the final prompt.</line>
+          <line number="12">  - Les instructions du projet (objectifs, conventions, performances, UX, etc.)</line>
           
-          <line number="13">- `scripts/`: Houses Python scripts for generating project structure and prompts.</line>
+          <line number="13">  - La structure du projet (fichiers, arborescence)</line>
           
-          <line number="14">- `templates/`: Contains the Jinja2 template for the final prompt.</line>
+          <line number="14">  - Le contexte de la base de code (extraits de code, descriptions)</line>
           
-          <line number="15"></line>
+          <line number="15">  - Le format de réponse attendu (basé sur le format choisi par l'utilisateur)</line>
           
-          <line number="16">Key files:</line>
+          <line number="16">  - La requête finale personnalisée</line>
           
-          <line number="17">- `run_full_process.sh`: Main script to execute the entire prompt generation process.</line>
+          <line number="17"></line>
           
-          <line number="18">- `scripts/generate_structure.py`: Generates the project structure and code context.</line>
+          <line number="18">## Architecture et répertoires</line>
           
-          <line number="19">- `scripts/generate_prompt.py`: Creates the final prompt using the gathered information.</line>
+          <line number="19"></line>
           
-          <line number="20">- `templates/prompt_template.jinja2`: Template for structuring the final prompt.</line>
+          <line number="20">- **`config/`** : Contient les fichiers de configuration utilisateur.</line>
           
-          <line number="21">- `config/settings.yaml`: Contains settings such as the source directory.</line>
+          <line number="21">  - `user_config.yaml` : Fichier principal où l'utilisateur définit :</line>
           
-          <line number="22">- `config/final_request.txt`: Contains the specific request for the AI model.</line>
+          <line number="22">    - Le répertoire source du code à analyser.</line>
           
-          <line number="23"></line>
+          <line number="23">    - Les patterns d'exclusion (fichiers et dossiers à ignorer).</line>
           
-          <line number="24">## How It Works</line>
+          <line number="24">    - Les instructions du projet (objectifs, conventions, UX, etc.).</line>
           
-          <line number="25"></line>
+          <line number="25">    - Le contexte du codebase (chemins et descriptions de fichiers clés).</line>
           
-          <line number="26">1. The `run_full_process.sh` script orchestrates the entire process:</line>
+          <line number="26">  - `final_request.yaml` : Contient la demande finale séparée (la requête que vous voulez poser au modèle d'IA).</line>
           
-          <line number="27">   - Checks for required directories and files.</line>
+          <line number="27">  - `formats/` : Répertoire contenant les formats de sortie disponibles (XML, Markdown, JSON, diff, etc.). Chaque format est décrit dans un fichier XML.</line>
           
-          <line number="28">   - Reads the source directory from settings.</line>
+          <line number="28"></line>
           
-          <line number="29">   - Runs `generate_structure.py` to analyze the project structure.</line>
+          <line number="29">- **`scripts/`** : Contient les scripts Python pour l'analyse et la génération.</line>
           
-          <line number="30">   - Executes `generate_prompt.py` to create the final prompt.</line>
+          <line number="30">  - `generate_structure.py` : Analyse l'arborescence du code source défini dans user_config.yaml, génère la structure et le contexte du code.</line>
           
-          <line number="31"></line>
+          <line number="31">  - `generate_prompt.py` : Lit user_config.yaml, final_request.yaml et les données générées par generate_structure.py pour créer le prompt final.</line>
           
-          <line number="32">2. `generate_structure.py`:</line>
+          <line number="32"></line>
           
-          <line number="33">   - Scans the project directory specified in `config/settings.yaml`.</line>
+          <line number="33">- **`templates/`** : Contient le template Jinja2 (`prompt_template.xml.jinja2`) pour générer le prompt final au format XML.</line>
           
-          <line number="34">   - Generates `data/code_structure.json`: A JSON representation of the project structure.</line>
+          <line number="34"></line>
           
-          <line number="35">   - Creates `data/code_context.md`: A Markdown file containing relevant code snippets and context.</line>
+          <line number="35">- **`output/`** : Répertoire où sont stockés les fichiers générés automatiquement :</line>
           
-          <line number="36"></line>
+          <line number="36">  - `code_structure.xml` : Représentation de la structure du code.</line>
           
-          <line number="37">3. `generate_prompt.py`:</line>
+          <line number="37">  - `code_context.xml` : Contexte détaillé (extraits de code).</line>
           
-          <line number="38">   - Loads configuration files from the `config/` directory.</line>
+          <line number="38">  - `final_prompt.xml` : Le prompt final prêt à être utilisé avec un modèle d'IA.</line>
           
-          <line number="39">   - Formats the loaded data into structured sections.</line>
+          <line number="39"></line>
           
-          <line number="40">   - Uses the Jinja2 template to render the final prompt.</line>
+          <line number="40">- **`run_full_process.sh`** : Script principal qui orchestre tout le processus.</line>
           
-          <line number="41">   - Outputs the generated prompt to stdout, which is then redirected to `data/final_prompt.txt`.</line>
+          <line number="41"></line>
           
-          <line number="42"></line>
+          <line number="42">## Flux de fonctionnement</line>
           
-          <line number="43">4. The final prompt includes:</line>
+          <line number="43"></line>
           
-          <line number="44">   - Project instructions</line>
+          <line number="44">1. **Préparation** :</line>
           
-          <line number="45">   - Project structure</line>
+          <line number="45">   - L'utilisateur modifie `config/user_config.yaml` pour définir le répertoire source, les exclusions, et les instructions du projet.</line>
           
-          <line number="46">   - Codebase context</line>
+          <line number="46">   - L'utilisateur définit sa requête finale dans `config/final_request.yaml`.</line>
           
-          <line number="47">   - Full code context</line>
+          <line number="47">   - Les autres fichiers de configuration (`config/formats/*`) et le template (`templates/prompt_template.xml.jinja2`) sont préconfigurés.</line>
           
-          <line number="48">   - Expected response format</line>
+          <line number="48"></line>
           
-          <line number="49">   - Specific request (from `config/final_request.txt`)</line>
+          <line number="49">2. **Exécution du script principal** :</line>
           
-          <line number="50"></line>
+          <line number="50">   - L'utilisateur lance `./run_full_process.sh`.</line>
           
-          <line number="51">## Usage</line>
+          <line number="51">   - Le script vérifie la présence des répertoires et fichiers nécessaires.</line>
           
           <line number="52"></line>
           
-          <line number="53">1. Ensure all required directories and configuration files are present.</line>
+          <line number="53">3. **Analyse de la structure** :</line>
           
-          <line number="54">2. Customize the configuration files in the `config/` directory as needed.</line>
+          <line number="54">   - `generate_structure.py` est exécuté.</line>
           
-          <line number="55">3. Run the main script:</line>
+          <line number="55">   - Il scanne `source_directory` (défini dans user_config.yaml) pour créer `output/code_structure.xml` et `output/code_context.xml`.</line>
           
-          <line number="56">   ```</line>
+          <line number="56"></line>
           
-          <line number="57">   ./run_full_process.sh</line>
+          <line number="57">4. **Choix du format** :</line>
           
-          <line number="58">   ```</line>
+          <line number="58">   - Le script `run_full_process.sh` affiche les formats disponibles (détectés dans `config/formats/`) et demande à l'utilisateur d'en choisir un (ex. none, xml, markdown, etc.).</line>
           
-          <line number="59">4. When prompted, confirm that you want to proceed with scanning the project source directory.</line>
+          <line number="59"></line>
           
-          <line number="60">5. The generated prompt will be saved in `data/final_prompt.txt`.</line>
+          <line number="60">5. **Génération du prompt final** :</line>
           
-          <line number="61">6. Use the content of `data/final_prompt.txt` with your AI assistant or model.</line>
+          <line number="61">   - `generate_prompt.py` est exécuté avec le format choisi.</line>
           
-          <line number="62"></line>
+          <line number="62">   - Il lit `user_config.yaml` et `final_request.yaml`.</line>
           
-          <line number="63">## Customization</line>
+          <line number="63">   - Il charge la structure et le contexte générés précédemment depuis `output/`.</line>
           
-          <line number="64"></line>
+          <line number="64">   - Il charge le template Jinja2 dans `templates/`.</line>
           
-          <line number="65">- Modify `config/project_instructions.yaml` to update project-specific instructions.</line>
+          <line number="65">   - Il construit le prompt final, puis l'écrit dans `output/final_prompt.xml`.</line>
           
-          <line number="66">- Edit `config/codebase_context.yaml` to provide context for key files in your project.</line>
+          <line number="66"></line>
           
-          <line number="67">- Adjust format files in `config/formats/` to specify the desired format for AI responses.</line>
+          <line number="67">6. **Résultat** :</line>
           
-          <line number="68">- Update `config/settings.yaml` to change the source directory or other settings.</line>
+          <line number="68">   - Le prompt final est un fichier XML structuré, enrichi de toutes les instructions et du contexte nécessaire, prêt à être copié-collé dans votre modèle d'IA.</line>
           
-          <line number="69">- Modify `config/final_request.txt` to customize the specific request for the AI model.</line>
+          <line number="69">   - Le script affiche le nombre de caractères et une estimation du nombre de tokens.</line>
           
           <line number="70"></line>
           
-          <line number="71">## Note</line>
+          <line number="71">## Avantages de la nouvelle organisation</line>
           
           <line number="72"></line>
           
-          <line number="73">This tool is designed to create structured and context-rich prompts for AI models, particularly useful for code analysis, refactoring suggestions, or answering specific questions about a codebase. The generated prompt provides a comprehensive overview of the project, allowing the AI to give more accurate and relevant responses.</line>
+          <line number="73">- **Clarté** :</line>
           
-          <line number="74"></line>
+          <line number="74">  - Un seul fichier principal de configuration (`user_config.yaml`) pour toutes les informations projet/code.</line>
           
-          <line number="75">After generating the prompt, the script will display the character count and an estimated token count for the generated prompt, which can be useful for managing token limits in AI models.</line>
+          <line number="75">  - Un fichier séparé pour la requête finale (`final_request.yaml`).</line>
           
-          <line number="76"></line>
+          <line number="76">  - Un répertoire de sortie (`output/`) distinct pour tous les fichiers générés.</line>
+          
+          <line number="77"></line>
+          
+          <line number="78">- **Évolutivité** :</line>
+          
+          <line number="79">  - Facile d'ajouter ou de modifier les formats de sortie dans `config/formats/`.</line>
+          
+          <line number="80">  - Simple de changer la structure du projet, d'ajouter des catégories, ou de nouveaux objectifs dans le YAML.</line>
+          
+          <line number="81"></line>
+          
+          <line number="82">- **Simplicité d'utilisation** :</line>
+          
+          <line number="83">  - L'utilisateur n'a qu'à éditer `user_config.yaml` et `final_request.yaml`.</line>
+          
+          <line number="84">  - L'exécution de `run_full_process.sh` gère le reste.</line>
+          
+          <line number="85"></line>
+          
+          <line number="86">## Personnalisation</line>
+          
+          <line number="87"></line>
+          
+          <line number="88">- Vous pouvez ajuster le template Jinja2 (`templates/prompt_template.xml.jinja2`) pour modifier la structure du prompt final.</line>
+          
+          <line number="89">- Vous pouvez créer votre propre format en ajoutant un fichier XML dans `config/formats/`.</line>
+          
+          <line number="90">- Vous pouvez changer le répertoire source du code, le format par défaut ou les patterns d'exclusion dans `user_config.yaml`.</line>
+          
+          <line number="91"></line>
+          
+          <line number="92">## Exemple d'utilisation</line>
+          
+          <line number="93"></line>
+          
+          <line number="94">1. Modifier `config/user_config.yaml` et `config/final_request.yaml` selon vos besoins.</line>
+          
+          <line number="95">2. Lancer :</line>
+          
+          <line number="96">   ```</line>
+          
+          <line number="97">   ./run_full_process.sh</line>
+          
+          <line number="98">   ```</line>
+          
+          <line number="99">3. Lorsque le script demande un format, saisir par exemple `none`.</line>
+          
+          <line number="100">4. Le prompt final apparaîtra dans `output/final_prompt.xml`.</line>
+          
+          <line number="101"></line>
+          
+          <line number="102">## Support et extensions</line>
+          
+          <line number="103"></line>
+          
+          <line number="104">- **Support multi-langages** : Le prompt final peut être adapté en différentes langues.</line>
+          
+          <line number="105">- **Integration CI/CD** : Vous pouvez exécuter ce script dans une pipeline CI pour générer régulièrement des prompts à jour en fonction du code source.</line>
+          
+          <line number="106">- **Ajout de nouveaux formats** : Créez un nouveau fichier dans `config/formats/` et modifiez le template si nécessaire.</line>
+          
+          <line number="107"></line>
           
         </lines>
       </file>
@@ -352,9 +414,9 @@
           
           <line number="18"></line>
           
-          <line number="19">if [ ! -f "config/final_request.yaml" ]; then</line>
+          <line number="19">if [ ! -f "config/project_data.yaml" ]; then</line>
           
-          <line number="20">    echo "Error: 'config/final_request.yaml' not found."</line>
+          <line number="20">    echo "Error: 'config/project_data.yaml' not found."</line>
           
           <line number="21">    exit 1</line>
           
@@ -362,9 +424,9 @@
           
           <line number="23"></line>
           
-          <line number="24">if [ ! -d "config/formats" ]; then</line>
+          <line number="24">if [ ! -f "config/final_request.yaml" ]; then</line>
           
-          <line number="25">    echo "Error: 'config/formats' directory not found."</line>
+          <line number="25">    echo "Error: 'config/final_request.yaml' not found."</line>
           
           <line number="26">    exit 1</line>
           
@@ -372,9 +434,9 @@
           
           <line number="28"></line>
           
-          <line number="29">if [ ! -f "templates/prompt_template.xml.jinja2" ]; then</line>
+          <line number="29">if [ ! -d "config/formats" ]; then</line>
           
-          <line number="30">    echo "Error: Template file 'prompt_template.xml.jinja2' not found."</line>
+          <line number="30">    echo "Error: 'config/formats' directory not found."</line>
           
           <line number="31">    exit 1</line>
           
@@ -382,9 +444,9 @@
           
           <line number="33"></line>
           
-          <line number="34">if [ ! -f "scripts/generate_structure.py" ] || [ ! -f "scripts/generate_prompt.py" ]; then</line>
+          <line number="34">if [ ! -f "templates/prompt_template.xml.jinja2" ]; then</line>
           
-          <line number="35">    echo "Error: Required scripts not found."</line>
+          <line number="35">    echo "Error: Template file 'prompt_template.xml.jinja2' not found."</line>
           
           <line number="36">    exit 1</line>
           
@@ -392,99 +454,109 @@
           
           <line number="38"></line>
           
-          <line number="39">ABS_SOURCE_DIR=$(pwd)</line>
+          <line number="39">if [ ! -f "scripts/generate_structure.py" ] || [ ! -f "scripts/generate_prompt.py" ]; then</line>
           
-          <line number="40">echo "We are about to scan the project source directory at: $ABS_SOURCE_DIR"</line>
+          <line number="40">    echo "Error: Required scripts not found."</line>
           
-          <line number="41"></line>
+          <line number="41">    exit 1</line>
           
-          <line number="42">echo "Running generate_structure.py..."</line>
+          <line number="42">fi</line>
           
-          <line number="43">python3 scripts/generate_structure.py</line>
+          <line number="43"></line>
           
-          <line number="44"></line>
+          <line number="44">ABS_SOURCE_DIR=$(pwd)</line>
           
-          <line number="45">if [ ! -f "output/code_structure.xml" ]; then</line>
+          <line number="45">echo "We are about to scan the project source directory at: $ABS_SOURCE_DIR"</line>
           
-          <line number="46">    echo "Error: 'output/code_structure.xml' not found after running generate_structure.py."</line>
+          <line number="46"></line>
           
-          <line number="47">    exit 1</line>
+          <line number="47">echo "Running generate_structure.py..."</line>
           
-          <line number="48">fi</line>
+          <line number="48">python3 scripts/generate_structure.py</line>
           
           <line number="49"></line>
           
-          <line number="50">if [ ! -f "output/code_context.xml" ]; then</line>
+          <line number="50">if [ ! -f "output/code_structure.xml" ]; then</line>
           
-          <line number="51">    echo "Warning: 'output/code_context.xml' not found. Possibly no files included."</line>
+          <line number="51">    echo "Error: 'output/code_structure.xml' not found after running generate_structure.py."</line>
           
-          <line number="52">fi</line>
+          <line number="52">    exit 1</line>
           
-          <line number="53"></line>
+          <line number="53">fi</line>
           
-          <line number="54">echo "Formats disponibles :"</line>
+          <line number="54"></line>
           
-          <line number="55">for file in config/formats/*.xml; do</line>
+          <line number="55">if [ ! -f "output/code_context.xml" ]; then</line>
           
-          <line number="56">    base=$(basename "$file" .xml)</line>
+          <line number="56">    echo "Warning: 'output/code_context.xml' not found. Possibly no files included."</line>
           
-          <line number="57">    echo "- $base"</line>
+          <line number="57">fi</line>
           
-          <line number="58">done</line>
+          <line number="58"></line>
           
-          <line number="59"></line>
+          <line number="59">echo "Formats disponibles :"</line>
           
-          <line number="60">read -p "Veuillez saisir un format : " USER_FORMAT</line>
+          <line number="60">for file in config/formats/*.xml; do</line>
           
-          <line number="61">USER_FORMAT=$(echo "$USER_FORMAT" | tr '[:upper:]' '[:lower:]')</line>
+          <line number="61">    base=$(basename "$file" .xml)</line>
           
-          <line number="62"></line>
+          <line number="62">    echo "- $base"</line>
           
-          <line number="63">if [ ! -f "config/formats/$USER_FORMAT.xml" ]; then</line>
+          <line number="63">done</line>
           
-          <line number="64">    echo "Erreur : Le format '$USER_FORMAT' n'est pas supporté."</line>
+          <line number="64"></line>
           
-          <line number="65">    exit 1</line>
+          <line number="65">read -p "Veuillez saisir un format : " USER_FORMAT</line>
           
-          <line number="66">fi</line>
+          <line number="66">USER_FORMAT=$(echo "$USER_FORMAT" | tr '[:upper:]' '[:lower:]')</line>
           
           <line number="67"></line>
           
-          <line number="68">echo "Running generate_prompt.py..."</line>
+          <line number="68">if [ ! -f "config/formats/$USER_FORMAT.xml" ]; then</line>
           
-          <line number="69">python3 scripts/generate_prompt.py "$USER_FORMAT" | tee output/final_prompt.xml</line>
+          <line number="69">    echo "Erreur : Le format '$USER_FORMAT' n'est pas supporté."</line>
           
-          <line number="70"></line>
+          <line number="70">    exit 1</line>
           
-          <line number="71">if [ ! -f "output/final_prompt.xml" ]; then</line>
+          <line number="71">fi</line>
           
-          <line number="72">    echo "Error: 'output/final_prompt.xml' was not created."</line>
+          <line number="72"></line>
           
-          <line number="73">    exit 1</line>
+          <line number="73">echo "Running generate_prompt.py..."</line>
           
-          <line number="74">fi</line>
+          <line number="74">python3 scripts/generate_prompt.py "$USER_FORMAT" | tee output/final_prompt.xml</line>
           
           <line number="75"></line>
           
-          <line number="76">CHAR_COUNT=$(wc -m < output/final_prompt.xml | tr -d '[:space:]')</line>
+          <line number="76">if [ ! -f "output/final_prompt.xml" ]; then</line>
           
-          <line number="77">TOKEN_ESTIMATE=$((CHAR_COUNT / 4))</line>
+          <line number="77">    echo "Error: 'output/final_prompt.xml' was not created."</line>
           
-          <line number="78"></line>
+          <line number="78">    exit 1</line>
           
-          <line number="79">echo "----------------------------------------"</line>
+          <line number="79">fi</line>
           
-          <line number="80">echo "Prompt successfully generated and saved to output/final_prompt.xml"</line>
+          <line number="80"></line>
           
-          <line number="81">echo "Character count: $CHAR_COUNT"</line>
+          <line number="81">CHAR_COUNT=$(wc -m < output/final_prompt.xml | tr -d '[:space:]')</line>
           
-          <line number="82">echo "Estimated tokens (approx): $TOKEN_ESTIMATE"</line>
+          <line number="82">TOKEN_ESTIMATE=$((CHAR_COUNT / 4))</line>
           
-          <line number="83">echo "----------------------------------------"</line>
+          <line number="83"></line>
           
-          <line number="84">echo "Process completed successfully."</line>
+          <line number="84">echo "----------------------------------------"</line>
           
-          <line number="85"></line>
+          <line number="85">echo "Prompt successfully generated and saved to output/final_prompt.xml"</line>
+          
+          <line number="86">echo "Character count: $CHAR_COUNT"</line>
+          
+          <line number="87">echo "Estimated tokens (approx): $TOKEN_ESTIMATE"</line>
+          
+          <line number="88">echo "----------------------------------------"</line>
+          
+          <line number="89">echo "Process completed successfully."</line>
+          
+          <line number="90"></line>
           
         </lines>
       </file>
@@ -738,87 +810,87 @@
           
           <line number="7"></line>
           
-          <line number="8">def load_yaml_config():</line>
+          <line number="8">def load_user_config():</line>
           
           <line number="9">    with open("config/user_config.yaml", "r", encoding="utf-8") as f:</line>
           
-          <line number="10">        data = yaml.safe_load(f)</line>
+          <line number="10">        return yaml.safe_load(f)</line>
           
-          <line number="11">    return data</line>
+          <line number="11"></line>
           
-          <line number="12"></line>
+          <line number="12">def load_project_data():</line>
           
-          <line number="13">def load_final_request():</line>
+          <line number="13">    with open("config/project_data.yaml", "r", encoding="utf-8") as f:</line>
           
-          <line number="14">    with open("config/final_request.yaml", "r", encoding="utf-8") as f:</line>
+          <line number="14">        return yaml.safe_load(f)</line>
           
-          <line number="15">        data = yaml.safe_load(f)</line>
+          <line number="15"></line>
           
-          <line number="16">    return data.get("final_request", "Please explain the codebase.")</line>
+          <line number="16">def load_final_request():</line>
           
-          <line number="17"></line>
+          <line number="17">    with open("config/final_request.yaml", "r", encoding="utf-8") as f:</line>
           
-          <line number="18">def parse_code_context(root):</line>
+          <line number="18">        data = yaml.safe_load(f)</line>
           
-          <line number="19">    files_data = []</line>
+          <line number="19">    return data.get("final_request", "Please explain the codebase.")</line>
           
-          <line number="20">    for f in root.findall("./file"):</line>
+          <line number="20"></line>
           
-          <line number="21">        path = f.get("path", "")</line>
+          <line number="21">def parse_code_context(root):</line>
           
-          <line number="22">        code_elem = f.find("./code")</line>
+          <line number="22">    files_data = []</line>
           
-          <line number="23">        language = code_elem.get("language", "none") if code_elem is not None else "none"</line>
+          <line number="23">    for f in root.findall("./file"):</line>
           
-          <line number="24">        lines_data = []</line>
+          <line number="24">        path = f.get("path", "")</line>
           
-          <line number="25">        if code_elem is not None:</line>
+          <line number="25">        code_elem = f.find("./code")</line>
           
-          <line number="26">            for line_elem in code_elem.findall("./line"):</line>
+          <line number="26">        language = code_elem.get("language", "none") if code_elem is not None else "none"</line>
           
-          <line number="27">                number = line_elem.get("number", "0")</line>
+          <line number="27">        lines_data = []</line>
           
-          <line number="28">                text = line_elem.text if line_elem.text else ""</line>
+          <line number="28">        if code_elem is not None:</line>
           
-          <line number="29">                lines_data.append({'number': number, 'text': text})</line>
+          <line number="29">            for line_elem in code_elem.findall("./line"):</line>
           
-          <line number="30">        files_data.append({</line>
+          <line number="30">                number = line_elem.get("number", "0")</line>
           
-          <line number="31">            'path': path,</line>
+          <line number="31">                text = line_elem.text if line_elem.text else ""</line>
           
-          <line number="32">            'language': language,</line>
+          <line number="32">                lines_data.append({'number': number, 'text': text})</line>
           
-          <line number="33">            'lines': lines_data</line>
+          <line number="33">        files_data.append({</line>
           
-          <line number="34">        })</line>
+          <line number="34">            'path': path,</line>
           
-          <line number="35">    return files_data</line>
+          <line number="35">            'language': language,</line>
           
-          <line number="36"></line>
+          <line number="36">            'lines': lines_data</line>
           
-          <line number="37">def main():</line>
+          <line number="37">        })</line>
           
-          <line number="38">    if len(sys.argv) < 2:</line>
+          <line number="38">    return files_data</line>
           
-          <line number="39">        print("Error: format argument missing.")</line>
+          <line number="39"></line>
           
-          <line number="40">        sys.exit(1)</line>
+          <line number="40">def main():</line>
           
-          <line number="41"></line>
+          <line number="41">    if len(sys.argv) < 2:</line>
           
-          <line number="42">    chosen_format = sys.argv[1].lower()</line>
+          <line number="42">        print("Error: format argument missing.")</line>
           
-          <line number="43">    data = load_yaml_config()</line>
+          <line number="43">        sys.exit(1)</line>
           
-          <line number="44">    final_request = load_final_request()</line>
+          <line number="44"></line>
           
-          <line number="45"></line>
+          <line number="45">    chosen_format = sys.argv[1].lower()</line>
           
-          <line number="46">    # Extraire les infos du fichier YAML</line>
+          <line number="46"></line>
           
-          <line number="47">    project_instructions = data.get("project_instructions", {})</line>
+          <line number="47">    project_data = load_project_data()</line>
           
-          <line number="48">    codebase_context = data.get("codebase_context", [])</line>
+          <line number="48">    final_request = load_final_request()</line>
           
           <line number="49"></line>
           
@@ -846,25 +918,25 @@
           
           <line number="61">    # Extraire les données du projet</line>
           
-          <line number="62">    pn = project_instructions.get("project_name", "")</line>
+          <line number="62">    pn = project_data.get("project_name", "")</line>
           
-          <line number="63">    objs = project_instructions.get("objectives", [])</line>
+          <line number="63">    objs = project_data.get("objectives", [])</line>
           
-          <line number="64">    cc = project_instructions.get("code_conventions", {})</line>
+          <line number="64">    cc = project_data.get("code_conventions", {})</line>
           
-          <line number="65">    pl = project_instructions.get("privacy_and_legal", [])</line>
+          <line number="65">    pl = project_data.get("privacy_and_legal", [])</line>
           
-          <line number="66">    pa = project_instructions.get("performance_and_architecture", [])</line>
+          <line number="66">    pa = project_data.get("performance_and_architecture", [])</line>
           
-          <line number="67">    ux = project_instructions.get("ux_guidelines", [])</line>
+          <line number="67">    ux = project_data.get("ux_guidelines", [])</line>
           
-          <line number="68">    ad = project_instructions.get("advertising", [])</line>
+          <line number="68">    ad = project_data.get("advertising", [])</line>
           
-          <line number="69">    ev = project_instructions.get("evolutivity", [])</line>
+          <line number="69">    ev = project_data.get("evolutivity", [])</line>
           
-          <line number="70"></line>
+          <line number="70">    codebase_context = project_data.get("codebase_context", [])</line>
           
-          <line number="71">    # code_conventions détails</line>
+          <line number="71"></line>
           
           <line number="72">    lang_stack = cc.get("language_stack", {})</line>
           
@@ -884,7 +956,7 @@
           
           <line number="80"></line>
           
-          <line number="81">    # Construction de files_info comme précédemment</line>
+          <line number="81">    # Construire files_info à partir de codebase_context</line>
           
           <line number="82">    files_root = ET.Element("files")</line>
           
@@ -904,91 +976,89 @@
           
           <line number="90"></line>
           
-          <line number="91">    # Charger les instructions / exemples du format</line>
+          <line number="91">    format_file = f"config/formats/{chosen_format}.xml"</line>
           
-          <line number="92">    format_file = f"config/formats/{chosen_format}.xml"</line>
+          <line number="92">    if not os.path.exists(format_file):</line>
           
-          <line number="93">    if not os.path.exists(format_file):</line>
+          <line number="93">        print("Format file not found.")</line>
           
-          <line number="94">        print("Format file not found.")</line>
+          <line number="94">        sys.exit(1)</line>
           
-          <line number="95">        sys.exit(1)</line>
+          <line number="95">    format_root = ET.parse(format_file).getroot()</line>
           
-          <line number="96">    format_root = ET.parse(format_file).getroot()</line>
+          <line number="96"></line>
           
-          <line number="97"></line>
+          <line number="97">    def get_list(root, xpath):</line>
           
-          <line number="98">    def get_list(root, xpath):</line>
+          <line number="98">        return [e.text.strip() for e in root.findall(xpath)]</line>
           
-          <line number="99">        return [e.text.strip() for e in root.findall(xpath)]</line>
+          <line number="99"></line>
           
-          <line number="100"></line>
+          <line number="100">    format_instructions = get_list(format_root, "./instructions/instruction")</line>
           
-          <line number="101">    format_instructions = get_list(format_root, "./instructions/instruction")</line>
+          <line number="101">    format_examples = get_list(format_root, "./examples/example")</line>
           
-          <line number="102">    format_examples = get_list(format_root, "./examples/example")</line>
+          <line number="102"></line>
           
-          <line number="103"></line>
+          <line number="103">    env = Environment(loader=FileSystemLoader("templates"))</line>
           
-          <line number="104">    env = Environment(loader=FileSystemLoader("templates"))</line>
+          <line number="104">    template = env.get_template("prompt_template.xml.jinja2")</line>
           
-          <line number="105">    template = env.get_template("prompt_template.xml.jinja2")</line>
+          <line number="105"></line>
           
-          <line number="106"></line>
+          <line number="106">    prompt = template.render(</line>
           
-          <line number="107">    prompt = template.render(</line>
+          <line number="107">        project_name=pn,</line>
           
-          <line number="108">        project_name=pn,</line>
+          <line number="108">        objectives=objs,</line>
           
-          <line number="109">        objectives=objs,</line>
+          <line number="109">        frontend_stack=frontend_stack,</line>
           
-          <line number="110">        frontend_stack=frontend_stack,</line>
+          <line number="110">        backend_stack=backend_stack,</line>
           
-          <line number="111">        backend_stack=backend_stack,</line>
+          <line number="111">        directories_frontend=directories_frontend,</line>
           
-          <line number="112">        directories_frontend=directories_frontend,</line>
+          <line number="112">        directories_backend=directories_backend,</line>
           
-          <line number="113">        directories_backend=directories_backend,</line>
+          <line number="113">        coding_style=coding_style,</line>
           
-          <line number="114">        coding_style=coding_style,</line>
+          <line number="114">        privacy_and_legal=pl,</line>
           
-          <line number="115">        privacy_and_legal=pl,</line>
+          <line number="115">        performance_and_arch=pa,</line>
           
-          <line number="116">        performance_and_arch=pa,</line>
+          <line number="116">        ux_guidelines=ux,</line>
           
-          <line number="117">        ux_guidelines=ux,</line>
+          <line number="117">        advertising=ad,</line>
           
-          <line number="118">        advertising=ad,</line>
+          <line number="118">        evolutivity=ev,</line>
           
-          <line number="119">        evolutivity=ev,</line>
+          <line number="119">        code_structure=code_structure,</line>
           
-          <line number="120">        code_structure=code_structure,</line>
+          <line number="120">        files_info=files_info,</line>
           
-          <line number="121">        files_info=files_info,</line>
+          <line number="121">        code_files=code_files,</line>
           
-          <line number="122">        code_files=code_files,</line>
+          <line number="122">        request=final_request,</line>
           
-          <line number="123">        request=final_request,</line>
+          <line number="123">        chosen_format=chosen_format,</line>
           
-          <line number="124">        chosen_format=chosen_format,</line>
+          <line number="124">        format_instructions=format_instructions,</line>
           
-          <line number="125">        format_instructions=format_instructions,</line>
+          <line number="125">        format_examples=format_examples</line>
           
-          <line number="126">        format_examples=format_examples</line>
+          <line number="126">    )</line>
           
-          <line number="127">    )</line>
+          <line number="127"></line>
           
-          <line number="128"></line>
+          <line number="128">    print(prompt)</line>
           
-          <line number="129">    print(prompt)</line>
+          <line number="129"></line>
           
-          <line number="130"></line>
+          <line number="130">if __name__ == "__main__":</line>
           
-          <line number="131">if __name__ == "__main__":</line>
+          <line number="131">    main()</line>
           
-          <line number="132">    main()</line>
-          
-          <line number="133"></line>
+          <line number="132"></line>
           
         </lines>
       </file>
@@ -1408,7 +1478,9 @@
         <language>yaml</language>
         <lines>
           
-          <line number="1">final_request: "Je vais faire une analyse de mon projet et tu vas m'aider a le reorganiser et mieux le penser. Le problème actuel est que je trouve que c'est désordonné. D'un côté l'utilisateur doit à la fois fournir dans config/ des fichiers par rapport à son projet. Il doit récupérer le résultat final dans output/ qui contient aussi les fichiers générés automatiquement. Y a-t-il un moyen de rendre le projet plus facile à utiliser ? Propose des suggestions."</line>
+          <line number="1">final_request: "Finalement je veux separer le fichier de config user et le fichier project instruction + codebase context. </line>
+          
+          <line number="2">donne le code complet pour faire en sorte que la modification soit bien prise en compte"</line>
           
         </lines>
       </file>
@@ -1469,134 +1541,6 @@
           <line number="25">  - "*.swp"</line>
           
           <line number="26"></line>
-          
-          <line number="27">project_instructions:</line>
-          
-          <line number="28">  project_name: "Immersive Try-On Kiosk"</line>
-          
-          <line number="29">  objectives:</line>
-          
-          <line number="30">    - "Provide an immersive and fluent user experience to virtually try on clothing."</line>
-          
-          <line number="31">    - "Ensure a complete workflow: from initial photo capture to generating multiple try-on images."</line>
-          
-          <line number="32">    - "Facilitate easy addition of new clothing categories, items, and languages."</line>
-          
-          <line number="33">  code_conventions:</line>
-          
-          <line number="34">    language_stack:</line>
-          
-          <line number="35">      frontend: "React (ESModules, functional components)"</line>
-          
-          <line number="36">      backend: "Node.js / Express"</line>
-          
-          <line number="37">    directories_structure:</line>
-          
-          <line number="38">      frontend: "src/components, src/pages, src/services, src/styles"</line>
-          
-          <line number="39">      backend: "src/routes, src/controllers, src=models, src=services"</line>
-          
-          <line number="40">    coding_style:</line>
-          
-          <line number="41">      - "Follow ES6 conventions"</line>
-          
-          <line number="42">      - "Write clean, well-commented, and readable code"</line>
-          
-          <line number="43">      - "Separate business logic from presentation"</line>
-          
-          <line number="44">      - "Use hooks and context for state management if necessary"</line>
-          
-          <line number="45">  privacy_and_legal:</line>
-          
-          <line number="46">    - "Obtain explicit consent before capturing and saving photos"</line>
-          
-          <line number="47">    - "Save each session and its associated images in the database"</line>
-          
-          <line number="48">    - "No reuse of images outside the current session"</line>
-          
-          <line number="49">  performance_and_architecture:</line>
-          
-          <line number="50">    - "Image generation should take between 5s and 1min max"</line>
-          
-          <line number="51">    - "Only one user session at a time"</line>
-          
-          <line number="52">    - "Maintain a clean, modular, and maintainable codebase"</line>
-          
-          <line number="53">  ux_guidelines:</line>
-          
-          <line number="54">    - "Fullscreen interface without global scroll"</line>
-          
-          <line number="55">    - "Smooth navigation, visual and audio feedback"</line>
-          
-          <line number="56">    - "Large buttons, clear text"</line>
-          
-          <line number="57">    - "On-the-fly language switching"</line>
-          
-          <line number="58">    - "Scrollable sidebars for history and item selection"</line>
-          
-          <line number="59">  advertising:</line>
-          
-          <line number="60">    - "Display a non-intrusive ad during image generation"</line>
-          
-          <line number="61">  evolutivity:</line>
-          
-          <line number="62">    - "Add new categories, items, and languages easily"</line>
-          
-          <line number="63">    - "Maintain a code structure that supports future extensions"</line>
-          
-          <line number="64"></line>
-          
-          <line number="65">codebase_context:</line>
-          
-          <line number="66">  - path: "frontend/src/pages/Home.js"</line>
-          
-          <line number="67">    description: "Displays webcam feed, 'Let's Play' button, and language switcher at startup."</line>
-          
-          <line number="68">  - path: "frontend/src/pages/ConsentModal.js"</line>
-          
-          <line number="69">    description: "Handles legal consent before taking and saving photos."</line>
-          
-          <line number="70">  - path: "frontend/src/pages/TutorialAndCountdown.js"</line>
-          
-          <line number="71">    description: "Shows a countdown and tutorial overlay to guide user positioning before photo capture."</line>
-          
-          <line number="72">  - path: "frontend/src/pages/PhotoValidation.js"</line>
-          
-          <line number="73">    description: "Displays the captured photo, allowing confirmation or retaking."</line>
-          
-          <line number="74">  - path: "frontend/src/pages/MainScreen.js"</line>
-          
-          <line number="75">    description: "Main interface after initial photo validation, shows selected image, history of generated images, and item/category selection."</line>
-          
-          <line number="76">  - path: "frontend/src/components/LanguageSwitcher.js"</line>
-          
-          <line number="77">    description: "Allows user to switch languages at any time."</line>
-          
-          <line number="78">  - path: "frontend/src/components/CategorySelector.js"</line>
-          
-          <line number="79">    description: "Displays clothing categories and triggers a modal for item selection."</line>
-          
-          <line number="80">  - path: "frontend/src/components/ClothesModal.js"</line>
-          
-          <line number="81">    description: "Transparent modal listing available items for the selected category."</line>
-          
-          <line number="82">  - path: "frontend/src/services/api.js"</line>
-          
-          <line number="83">    description: "Handles communication with backend (Node.js/Express) for image saving and retrieval."</line>
-          
-          <line number="84">  - path: "backend/src/routes/sessionRoutes.js"</line>
-          
-          <line number="85">    description: "Defines routes for session creation, photo saving, and image retrieval."</line>
-          
-          <line number="86">  - path: "backend/src/controllers/sessionController.js"</line>
-          
-          <line number="87">    description: "Implements business logic for managing sessions and photos."</line>
-          
-          <line number="88">  - path: "backend/src/services/imageGeneration.js"</line>
-          
-          <line number="89">    description: "Interfaces with the image generation engine (AI) to create try-on outputs."</line>
-          
-          <line number="90"></line>
           
         </lines>
       </file>
@@ -1791,20 +1735,32 @@
   </full_code_context>
 
   <format>
-    <selected>none</selected>
+    <selected>xml</selected>
     <instructions>
       
-      <instruction>No specific formatting.</instruction>
+      <instruction>Use XML tags to structure your response.</instruction>
+      
+      <instruction>Use <code> elements for code samples.</instruction>
       
     </instructions>
     <examples>
       
-      <example>Just plain text without special formatting.</example>
+      <example><example></example>
+      
+      <example><title>Title</title></example>
+      
+      <example><list></example>
+      
+      <example><item>Bullet point</item></example>
+      
+      <example></list></example>
+      
+      <example></example></example>
       
     </examples>
   </format>
 
   <request>
-    Je vais faire une analyse de mon projet et tu vas m'aider a le reorganiser et mieux le penser. Le problème actuel est que je trouve que c'est désordonné. D'un côté l'utilisateur doit à la fois fournir dans config/ des fichiers par rapport à son projet. Il doit récupérer le résultat final dans output/ qui contient aussi les fichiers générés automatiquement. Y a-t-il un moyen de rendre le projet plus facile à utiliser ? Propose des suggestions.
+    Finalement je veux separer le fichier de config user et le fichier project instruction + codebase context. donne le code complet pour faire en sorte que la modification soit bien prise en compte
   </request>
 </prompt>

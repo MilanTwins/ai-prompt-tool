@@ -1,0 +1,120 @@
+project_name: "Immersive Try-On Kiosk"
+objectives:
+  - "Provide an immersive and fluent user experience to virtually try on clothing."
+  - "Ensure a complete workflow: from initial photo capture to generating multiple try-on images."
+  - "Facilitate easy addition of new clothing categories, items, and languages."
+
+code_conventions:
+  language_stack:
+    frontend: "React (ESModules, functional components)"
+    backend: "Node.js / Express"
+  directories_structure:
+    frontend: "src/components, src/pages, src/services, src/styles"
+    backend: "src/routes, src.controllers, src=models, src=services"
+  coding_style:
+    - "Follow ES6 conventions"
+    - "Write clean, well-commented, and readable code"
+    - "Separate business logic from presentation"
+    - "Use hooks and context for state management if necessary"
+
+multilingual:
+  - "Interface conçue pour supporter plusieurs langues."
+  - "Système de gestion des langues (fichiers de traduction, variables dynamiques)."
+  - "Indicateur (drapeau) visible pour changer de langue."
+  - "Changement de langue effectif immédiatement sur toute l’interface."
+
+user_journey:
+  - "1. Écran d’accueil : webcam fullscreen + 'Let’s Play', drapeau langue, cadre positionnement."
+  - "2. Modal consentement légal : accepter/refuser sauvegarde photos."
+  - "3. Décompte (10s) + tutoriel (5s), photo prise à 0s."
+  - "4. Modal validation photo : confirmer ou reprendre. Si confirmé, session démarre (photo BDD)."
+  - "5. Écran principal : photo sélectionnée, historique vertical, barre horizontale catégories, modal vêtements, génération images."
+  - "6. Écran génération : barre progression (5s-1min), pub non-intrusive, retour écran principal."
+  - "7. Retour écran principal : nouvelle image sous l’originale, possibilité régénérer."
+  - "8. Fin session : modal numéro téléphone (SMS), terminer, retour accueil webcam."
+
+privacy_and_legal:
+  - "Obtain explicit consent before capturing and saving photos"
+  - "Save each session and its associated images in the database"
+  - "No reuse of images outside the current session"
+
+performance_and_architecture:
+  - "Image generation should take between 5s and 1min max"
+  - "Only one user session at a time"
+  - "Maintain a clean, modular, and maintainable codebase"
+
+ux_guidelines:
+  - "Fullscreen interface without global scroll"
+  - "Smooth navigation, visual and audio feedback"
+  - "Large buttons, clear text"
+  - "On-the-fly language switching"
+  - "Scrollable sidebars for history and item selection"
+
+advertising:
+  - "Display a non-intrusive ad during image generation"
+
+evolutivity:
+  - "Add new categories, items, and languages easily"
+  - "Maintain a code structure that supports future extensions"
+
+constraints_and_requirements:
+  affichage_pleine_page:
+    - "Toujours fullscreen sans scroll global."
+    - "Barres d’historique et sélection scrollables."
+  vue_webcam_immersive:
+    - "Webcam 100% écran accueil jusqu’à photo initiale."
+    - "Après validation, webcam disparaît, fullscreen réservé à l’image sélectionnée."
+  confidentialite:
+    - "Toutes les photos en BDD."
+    - "Consentement explicite avant capture."
+    - "Photos utilisées uniquement dans la session courante."
+  gestion_sessions:
+    - "Chaque photo initiale = nouvelle session."
+    - "Sessions précédentes inaccessibles."
+  performances:
+    - "Génération 5s à 1min."
+    - "Une seule session à la fois."
+  architecture_propre:
+    - "ESModules, répertoires dédiés."
+    - "Code commenté et lisible."
+  publicite_generation:
+    - "Pub sous la barre de progression."
+  experience_utilisateur_fluide:
+    - "Feedbacks visuels/sonores."
+    - "Boutons grands et clairs."
+    - "Multilingue à tout moment."
+  evolutivite:
+    - "Ajout facile catégories, vêtements, langues."
+
+summary:
+  - "Expérience immersive de try-on virtuel via webcam."
+  - "Sélection/génération d’images par catégorie."
+  - "Interface multilingue, réutilisation d’images générées."
+  - "Fin de session avec envoi SMS."
+  - "Respect confidentialité, performance, ergonomie."
+
+codebase_context:
+  - path: "frontend/src/pages/Home.js"
+    description: "Displays webcam feed, 'Let's Play' button, and language switcher at startup."
+  - path: "frontend/src/pages/ConsentModal.js"
+    description: "Handles legal consent before taking and saving photos."
+  - path: "frontend/src/pages/TutorialAndCountdown.js"
+    description: "Shows a countdown and tutorial overlay to guide user positioning before photo capture."
+  - path: "frontend/src/pages/PhotoValidation.js"
+    description: "Displays the captured photo, allowing confirmation or retaking."
+  - path: "frontend/src/pages/MainScreen.js"
+    description: "Main interface after initial photo validation, shows selected image, history of generated images, and item/category selection."
+  - path: "frontend/src/components/LanguageSwitcher.js"
+    description: "Allows user to switch languages at any time."
+  - path: "frontend/src/components/CategorySelector.js"
+    description: "Displays clothing categories and triggers a modal for item selection."
+  - path: "frontend/src/components/ClothesModal.js"
+    description: "Transparent modal listing available items for the selected category."
+  - path: "frontend/src/services/api.js"
+    description: "Handles communication with backend (Node.js/Express) for image saving and retrieval."
+  - path: "backend/src/routes/sessionRoutes.js"
+    description: "Defines routes for session creation, photo saving, and image retrieval."
+  - path: "backend/src/controllers/sessionController.js"
+    description: "Implements business logic for managing sessions and photos."
+  - path: "backend/src/services/imageGeneration.js"
+    description: "Interfaces with the image generation engine (AI) to create try-on outputs."

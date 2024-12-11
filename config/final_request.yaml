@@ -1,1 +1,2 @@
-final_request: "Je vais faire une analyse de mon projet et tu vas m'aider a le reorganiser et mieux le penser. Le problème actuel est que je trouve que c'est désordonné. D'un côté l'utilisateur doit à la fois fournir dans config/ des fichiers par rapport à son projet. Il doit récupérer le résultat final dans output/ qui contient aussi les fichiers générés automatiquement. Y a-t-il un moyen de rendre le projet plus facile à utiliser ? Propose des suggestions."
+final_request: "Finalement je veux separer le fichier de config user et le fichier project instruction + codebase context. 
+donne le code complet pour faire en sorte que la modification soit bien prise en compte"
