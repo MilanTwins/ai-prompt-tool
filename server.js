@@ -37,12 +37,10 @@ app.post('/api/updateSource', (req, res) => {
   const userConfigPath = path.join(__dirname, 'config', 'user_config.yaml');
   try {
     let yamlContent = fs.readFileSync(userConfigPath, 'utf-8');
-    if (/source_directory:/.test(yamlContent)) {
-      yamlContent = yamlContent.replace(/source_directory: ".*"/, `source_directory: "${source_directory}"`);
-    } else {
-      yamlContent = `source_directory: "${source_directory}"\n` + yamlContent;
-    }
-    fs.writeFileSync(userConfigPath, yamlContent, 'utf-8');
+    let doc = yaml.load(yamlContent) || {};
+    doc.source_directory = source_directory; // Mise à jour directe de la propriété
+    const newYaml = yaml.dump(doc);
+    fs.writeFileSync(userConfigPath, newYaml, 'utf-8');
     res.json({ success: true });
   } catch(e) {
     console.error(e);
@@ -120,8 +118,6 @@ app.get('/api/templates', (req, res) => {
 });
 
 // Liste les configs disponibles dans config/
-// Modification : on inclut maintenant project_data.yaml, user_config.yaml et final_request.yaml
-// si on veut les voir, on les inclut. Si on ne veut pas exclure, on retire du filtre.
 app.get('/api/listConfigs', (req, res) => {
   const configDir = path.join(__dirname, 'config');
   fs.readdir(configDir, (err, files) => {
@@ -129,8 +125,6 @@ app.get('/api/listConfigs', (req, res) => {
       console.error("Erreur lecture config dir:", err);
       return res.status(500).json({error:'cannot read config dir'});
     }
-    // Inclure tous les YAML sauf s'ils doivent être exclus explicitement.
-    // On va juste filtrer sur l'extension .yaml
     const configs = files.filter(f => f.endsWith('.yaml'));
     res.json({ configs });
   });
@@ -149,7 +143,7 @@ app.post('/api/getConfigContent', (req, res) => {
   });
 });
 
-// Crée une nouvelle config à partir d'un template (copie simple)
+// Crée une nouvelle config à partir d'un template
 app.post('/api/createConfig', (req, res) => {
   const { template, name } = req.body;
   const templatePath = path.join(__dirname, 'config', 'templates', template);
@@ -169,7 +163,7 @@ app.post('/api/createConfig', (req, res) => {
   });
 });
 
-// Nouveau endpoint: récupère le contenu d'un template pour pouvoir l'éditer
+// Récupère le contenu d'un template pour édition
 app.post('/api/getTemplateContent', (req, res) => {
   const { template } = req.body;
   const templatePath = path.join(__dirname, 'config', 'templates', template);
@@ -178,16 +172,13 @@ app.post('/api/getTemplateContent', (req, res) => {
       console.error("Erreur lecture template:", err);
       return res.status(500).json({error:'cannot read template'});
     }
-    // On envoie le YAML tel quel. Le front-end le parsera et affichera un formulaire.
     res.send(content);
   });
 });
 
-// Nouveau endpoint: créer un config personnalisé à partir des champs fournis
+// Créer un config personnalisé
 app.post('/api/createCustomConfig', (req, res) => {
-  // Le body contiendra un objet json représentant le contenu YAML final à écrire
   const { name, configData } = req.body;
-  // configData est déjà un objet JSON. Il faut le transformer en YAML.
   try {
     const yamlStr = yaml.dump(configData);
     const newPath = path.join(__dirname, 'config', name);
@@ -212,10 +203,8 @@ app.post('/api/updateSelectedConfigs', (req, res) => {
   try {
     let yamlContent = fs.readFileSync(userConfigPath, 'utf-8');
     const doc = yaml.load(yamlContent) || {};
-
     doc.selected_project_data = project_data_file;
     doc.selected_user_config = user_config_file;
-
     const newYaml = yaml.dump(doc);
     fs.writeFileSync(userConfigPath, newYaml, 'utf-8');
 

@@ -1,1 +1,12 @@
-final_request: "testtest"
+final_request: "Comme tu le vois dans les prompt que je t'envoi j'ai une partie \"format\" qui demande d'envoyer la reponse en respectant un certain format. 
+
+Je voudrais modifier mon projet pour ajouter unee nouvelle feature : 
+
+-> Je voudrais pouvoir demande a l'ai de me donner les diff des fichier directement. 
+Le but est de directement grace a la reponse de l'ai + un script que tu vas creer appliquer toutes les modification presente dans la reponse de l'ai (diff) et les applique a ma codebase. 
+
+-> Il faudra que cela fonctionne meme si il y a plusieurs fichier modifie. 
+
+-> Il faudra que cela fonctionne meme si dans le prompt de reponse il y a  des instructions autre que le gitdiff. 
+
+Guide moi etape par etape. Donne le code complet des fichier a ajouter / modifier"

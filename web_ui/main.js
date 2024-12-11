@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const selectThisDirBtn = document.getElementById('selectThisDirBtn');
   const selectedDirInfo = document.getElementById('selectedDirInfo');
 
-  // Récupérer le répertoire courant depuis le serveur
   let currentDir = '/';
   try {
     const dirData = await fetch('/api/currentDir').then(r => r.json());
@@ -24,7 +23,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error("Impossible de récupérer le répertoire courant depuis le serveur:", e);
   }
 
-  // Mettre à jour l'affichage du répertoire sélectionné
   function updateSelectedDirDisplay(dir) {
     selectedDirInfo.textContent = `Répertoire sélectionné : ${dir}`;
   }
@@ -103,10 +101,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     dirModal.style.display = 'none';
   });
 
-  selectThisDirBtn.addEventListener('click', () => {
+  selectThisDirBtn.addEventListener('click', async () => {
     sourceDirInput.value = currentDir;
     updateSelectedDirDisplay(currentDir);
     dirModal.style.display = 'none';
+
+    // AJOUT : Mettre à jour user_config.yaml immédiatement après la sélection du répertoire
+    const updateSourceResponse = await fetch('/api/updateSource', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ source_directory: currentDir })
+    });
+
+    if(!updateSourceResponse.ok) {
+      alert("Erreur lors de la mise à jour du répertoire source dans user_config.yaml");
+    } else {
+      console.log("Répertoire source mis à jour dans user_config.yaml:", currentDir);
+    }
   });
 
   generateBtn.addEventListener('click', async () => {
@@ -119,6 +130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    // NOTE: On appelle déjà updateSource plus haut, ici ça reste mais ce n’est plus strictement nécessaire
     const updateRes = await fetch('/api/updateSource', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
@@ -156,9 +168,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     await navigator.clipboard.writeText(data);
     alert("Prompt copié dans le presse-papiers !");
   });
-});
 
-const configPageBtn = document.getElementById('configPageBtn');
-configPageBtn.addEventListener('click', () => {
-  window.location.href = 'configuration.html';
+  const configPageBtn = document.getElementById('configPageBtn');
+  configPageBtn.addEventListener('click', () => {
+    window.location.href = 'configuration.html';
+  });
 });
