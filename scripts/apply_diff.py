@@ -17,13 +17,65 @@ def extract_diff_from_text(text):
     >>>
     """
 
-    # Regex to capture code block starting with <<<diff and ending with >>>
-    # We use re.MULTILINE and re.DOTALL to handle line breaks.
-    pattern = r'^<<<diff\s*\n(.*?)\n>>>\s*$'
+    pattern = r'^<<<diff\s*\n(.*?)\n>>>$'
     match = re.search(pattern, text, flags=re.DOTALL | re.MULTILINE)
     if match:
         return match.group(1).strip()
     return None
+
+def parse_diff(diff_content):
+    """
+    Parse the diff content and produce a summary of changes.
+    We'll identify each file modified and count additions/removals.
+    """
+
+    lines = diff_content.split('\n')
+    file_changes = []
+    current_file = None
+    additions = 0
+    deletions = 0
+
+    # Regex to identify the start of a diff for a file
+    file_start_regex = re.compile(r'^--- a/(.*)$')
+    file_end_regex = re.compile(r'^\+\+\+ b/(.*)$')
+    hunk_regex = re.compile(r'^@@ ')
+
+    for line in lines:
+        f_start = file_start_regex.match(line)
+        f_end = file_end_regex.match(line)
+        if f_start:
+            # If we were tracking a previous file, store its data first
+            if current_file:
+                # Store previous file's changes
+                file_changes.append((current_file, additions, deletions))
+            current_file = None
+            additions = 0
+            deletions = 0
+            # Just note the file, we will confirm after +++ line
+        elif f_end:
+            if f_end and current_file is None:
+                current_file = f_end.group(1)
+
+        elif current_file:
+            # Inside a file diff hunks
+            if hunk_regex.match(line):
+                # A new hunk starts here, continue
+                continue
+            else:
+                # Count line additions/deletions
+                # Lines starting with '+' are additions
+                # Lines starting with '-' are deletions
+                # Lines starting with ' ' are context
+                if line.startswith('+') and not line.startswith('+++'):
+                    additions += 1
+                elif line.startswith('-') and not line.startswith('---'):
+                    deletions += 1
+
+    # After the loop ends, if we have a current_file, store its data
+    if current_file:
+        file_changes.append((current_file, additions, deletions))
+
+    return file_changes
 
 def main():
     if len(sys.argv) < 2:
@@ -59,7 +111,13 @@ def main():
             print(result.stderr)
             sys.exit(1)
         else:
-            print("Patch applied successfully.")
+            print("Patch applied successfully.\n")
+
+            # Parse and print detailed info about changes
+            file_changes = parse_diff(diff_content)
+            print("Summary of changes:")
+            for fname, add, remove in file_changes:
+                print(f"- {fname}: +{add} lines, -{remove} lines")
     finally:
         # Remove the temporary patch file
         os.remove(patch_path)

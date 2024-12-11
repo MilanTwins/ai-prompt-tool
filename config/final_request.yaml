@@ -1,2 +1,5 @@
-final_request: "MOdifie mon webui interface pour que le button \" gerer les configurtation\" soit place tout en haut.
-Modifie aussi le theme globale de mon webui pour theme light"
+final_request: "Modifie l'emplacement du button \"gerer les configuration\" 
+POur qu'il s'integre bien dans l'interface actuel mais place le en haut de le projet (sous project dashboard) 
+
+fais aussi en sorte que le prompt genere si il depasse une certaine taille on puisse scoller pour le voir entierrement. 
+Passe le theme du webui en dark en modificant tout les element pour avoir un dark theme coherant"
