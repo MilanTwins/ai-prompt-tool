@@ -13,7 +13,7 @@
         <h1>Project Dashboard</h1>
         <div class="settings">
             <h2>Source Directory Path</h2>
-            <input type="text" id="sourceDir" placeholder="Ex: /home/user/myproject" readonly />
+            <input type="text" id="sourceDir" placeholder="Ex: /home/user/myproject" />
             <button id="chooseDirBtn">Choose Directory</button>
             <div id="selectedDirInfo"></div>
 
@@ -34,7 +34,7 @@
             <select id="formatSelect"></select>
             
             <h2>Final Request (final_request.yaml)</h2>
-            <textarea id="finalRequest" rows="5" placeholder="Type your final_request.yaml here..."></textarea>
+            <textarea id="finalRequest" rows="10" placeholder="Type your final_request.yaml here..."></textarea>
         </div>
         <button id="generateBtn">Let's generate</button>
         <div class="output">
@@ -91,11 +91,35 @@
                 errorUtils.handleError(error, 'loading formats');
             }
 
-            // Directory selection
+            // Directory input validation
+            let validationTimeout;
+            sourceDirInput.addEventListener('input', async (e) => {
+                clearTimeout(validationTimeout);
+                const path = e.target.value.trim();
+                
+                validationTimeout = setTimeout(async () => {
+                    if (!path) return;
+                    
+                    try {
+                        await ApiService.listDir(path);
+                        // Path exists, update the system
+                        await ApiService.updateSource(path);
+                        await fileTree.loadFileTree();
+                        selectedDirInfo.textContent = `Selected directory: ${path}`;
+                        selectedDirInfo.style.color = '#4CAF50';
+                    } catch (error) {
+                        selectedDirInfo.textContent = 'Invalid directory path';
+                        selectedDirInfo.style.color = '#f44336';
+                    }
+                }, 500);
+            });
+
+            // Directory selection via modal
             chooseDirBtn.addEventListener('click', () => {
                 directoryModal.show(async (selectedDir) => {
                     sourceDirInput.value = selectedDir;
                     selectedDirInfo.textContent = `Selected directory: ${selectedDir}`;
+                    selectedDirInfo.style.color = '#4CAF50';
                     
                     try {
                         await ApiService.updateSource(selectedDir);
@@ -150,6 +174,7 @@
                 
                 sourceDirInput.value = sourceDirectory;
                 selectedDirInfo.textContent = `Selected directory: ${sourceDirectory}`;
+                selectedDirInfo.style.color = '#4CAF50';
                 StateService.setCurrentDir(sourceDirectory);
                 
                 await fileTree.loadFileTree();

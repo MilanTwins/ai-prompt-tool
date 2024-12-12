@@ -52,6 +52,11 @@ textarea {
     font-family: monospace;
 }
 
+/* Final request textarea specific styles */
+#finalRequest {
+    min-height: 200px;
+}
+
 button {
     background-color: #4CAF50;
     color: white;

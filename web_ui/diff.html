@@ -14,7 +14,7 @@
         
         <div class="settings">
             <h2>Source Directory Path</h2>
-            <input type="text" id="sourceDir" placeholder="Select a directory to apply changes" readonly />
+            <input type="text" id="sourceDir" placeholder="Select a directory to apply changes" />
             <button id="chooseDirBtn">Choose Directory</button>
             <div id="selectedDirInfo"></div>
 
@@ -60,11 +60,34 @@
             const chooseDirBtn = document.getElementById('chooseDirBtn');
             const selectedDirInfo = document.getElementById('selectedDirInfo');
 
-            // Directory selection
+            // Directory input validation
+            let validationTimeout;
+            sourceDirInput.addEventListener('input', async (e) => {
+                clearTimeout(validationTimeout);
+                const path = e.target.value.trim();
+                
+                validationTimeout = setTimeout(async () => {
+                    if (!path) return;
+                    
+                    try {
+                        await ApiService.listDir(path);
+                        // Path exists, update the system
+                        await ApiService.updateSource(path);
+                        selectedDirInfo.textContent = `Selected directory: ${path}`;
+                        selectedDirInfo.style.color = '#4CAF50';
+                    } catch (error) {
+                        selectedDirInfo.textContent = 'Invalid directory path';
+                        selectedDirInfo.style.color = '#f44336';
+                    }
+                }, 500);
+            });
+
+            // Directory selection via modal
             chooseDirBtn.addEventListener('click', () => {
                 directoryModal.show(async (selectedDir) => {
                     sourceDirInput.value = selectedDir;
                     selectedDirInfo.textContent = `Selected directory: ${selectedDir}`;
+                    selectedDirInfo.style.color = '#4CAF50';
                     
                     try {
                         await ApiService.updateSource(selectedDir);
@@ -125,6 +148,7 @@
                 
                 sourceDirInput.value = sourceDirectory;
                 selectedDirInfo.textContent = `Selected directory: ${sourceDirectory}`;
+                selectedDirInfo.style.color = '#4CAF50';
                 StateService.setCurrentDir(sourceDirectory);
             } catch (error) {
                 errorUtils.handleError(error, 'initializing current directory');
