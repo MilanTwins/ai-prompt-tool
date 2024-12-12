@@ -4,11 +4,10 @@ const express = require('express');
 const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
-const yaml = require('js-yaml'); // Remplacer safeLoad par yaml.load
+const yaml = require('js-yaml');
 const os = require('os');
 
 const app = express();
-app.use(express.json());
 app.use(express.static(path.join(__dirname, 'web_ui')));
 
 // Liste des formats disponibles
@@ -39,7 +38,7 @@ app.post('/api/updateSource', (req, res) => {
   try {
     let yamlContent = fs.readFileSync(userConfigPath, 'utf-8');
     let doc = yaml.load(yamlContent) || {};
-    doc.source_directory = source_directory; // Mise à jour directe de la propriété
+    doc.source_directory = source_directory;
     const newYaml = yaml.dump(doc);
     fs.writeFileSync(userConfigPath, newYaml, 'utf-8');
     res.json({ success: true });
@@ -54,7 +53,10 @@ app.post('/api/updateFinalRequest', (req, res) => {
   const { final_request } = req.body;
   const finalRequestPath = path.join(__dirname, 'config', 'final_request.yaml');
   try {
-    const content = `final_request: "${final_request.replace(/"/g, '\\"')}"\n`;
+    // Use proper YAML dumping for the final request
+    const content = yaml.dump({
+      final_request: final_request
+    });
     fs.writeFileSync(finalRequestPath, content, 'utf-8');
     res.json({ success: true });
   } catch(e) {
@@ -100,8 +102,11 @@ app.post('/api/applyDiff', (req, res) => {
       fs.unlinkSync(tmpFile);
       
       if (error) {
-        console.error("Erreur application diff:", stderr);
-        return res.status(500).send(stderr || 'Error applying diff');
+        console.error("Erreur application diff:", stderr || stdout);
+        return res.status(500).json({ 
+          error: 'Error applying diff',
+          details: stderr || stdout // Send complete error output
+        });
       }
       
       // Parser la sortie pour extraire les informations sur les changements
@@ -135,7 +140,10 @@ app.post('/api/applyDiff', (req, res) => {
       fs.unlinkSync(tmpFile);
     }
     console.error(e);
-    res.status(500).json({ error: 'Failed to apply diff' });
+    res.status(500).json({ 
+      error: 'Failed to apply diff',
+      details: e.message // Include error details
+    });
   }
 });
 

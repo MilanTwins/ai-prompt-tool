@@ -94,7 +94,8 @@ def main():
 
     diff_content = extract_diff_from_text(content)
     if not diff_content:
-        print("No diff code block found in the AI response.")
+        print("Error: No diff code block found in the AI response.")
+        print("The response must contain a diff block starting with <<<diff and ending with >>>")
         sys.exit(1)
 
     # Write diff to a temporary file
@@ -106,9 +107,16 @@ def main():
     try:
         result = subprocess.run(["patch", "-p1", "-i", patch_path], check=False, capture_output=True, text=True)
         if result.returncode != 0:
-            print("Failed to apply patch. Output:")
+            print("Failed to apply patch. Details:")
+            print("\nPatch command output:")
             print(result.stdout)
+            print("\nError messages:")
             print(result.stderr)
+            print("\nPossible reasons for failure:")
+            print("1. The files to be modified don't match the expected state")
+            print("2. The files have been modified since the diff was created")
+            print("3. The paths in the diff don't match your directory structure")
+            print("\nRejected changes have been saved to .rej files")
             sys.exit(1)
         else:
             print("Patch applied successfully.\n")
@@ -118,6 +126,8 @@ def main():
             print("Summary of changes:")
             for fname, add, remove in file_changes:
                 print(f"- {fname}: +{add} lines, -{remove} lines")
+            
+            print("\nNote: Please verify the changes in your files to ensure they were applied correctly.")
     finally:
         # Remove the temporary patch file
         os.remove(patch_path)

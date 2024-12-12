@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -17,31 +17,31 @@
     <h1>Apply AI Changes</h1>
     
     <div class="settings">
-      <h2>Chemin du répertoire source</h2>
-      <input type="text" id="sourceDir" placeholder="Ex: /home/user/myproject" readonly />
-      <button id="chooseDirBtn">Choisir un répertoire</button>
+      <h2>Source Directory Path</h2>
+      <input type="text" id="sourceDir" placeholder="Select a directory to apply changes" readonly />
+      <button id="chooseDirBtn">Choose Directory</button>
       <div id="selectedDirInfo"></div>
 
-      <h2>Réponse de l'AI</h2>
-      <textarea id="aiResponse" rows="10" placeholder="Collez la réponse de l'AI contenant les modifications (diff) ici..."></textarea>
+      <h2>AI Response</h2>
+      <textarea id="aiResponse" rows="10" placeholder="Paste the AI response containing modifications (diff) here..."></textarea>
       
-      <button id="applyChangesBtn">Appliquer les modifications</button>
+      <button id="applyChangesBtn">Apply Changes</button>
     </div>
 
     <div class="output">
-      <h2>Résultat</h2>
+      <h2>Result</h2>
       <pre id="diffOutput"></pre>
     </div>
   </div>
 
-  <!-- Modal pour explorer les répertoires -->
+  <!-- Directory explorer modal -->
   <div id="dirModal" class="modal">
     <div class="modal-content">
-      <h2>Explorer les répertoires</h2>
+      <h2>Browse Directories</h2>
       <div id="pathDisplay"></div>
-      <div id="dirList"></div>
-      <button id="selectThisDirBtn">Sélectionner ce répertoire</button>
-      <button id="closeModalBtn">Fermer</button>
+      <div id="dirList" class="directory-list"></div>
+      <button id="selectThisDirBtn">Select This Directory</button>
+      <button id="closeModalBtn">Close</button>
     </div>
   </div>
 

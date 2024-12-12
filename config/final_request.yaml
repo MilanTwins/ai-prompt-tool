@@ -1,1 +1,21 @@
-final_request: ""
+final_request: "
+ABS_SOURCE_DIR=$(pwd)
+echo \"We are about to scan the project source directory at: $ABS_SOURCE_DIR\"
+
+echo \"Running generate_structure.py...\"
+python3 scripts/generate_structure.py
+
+if [ ! -f \"output/code_structure.xml\" ]; then
+    echo \"Error: 'output/code_structure.xml' not found after running generate_structure.py.\"
+    exit 1
+fi
+
+if [ ! -f \"output/code_context.xml\" ]; then
+    echo \"Warning: 'output/code_context.xml' not found. Possibly no files included.\"
+fi
+
+echo \"Formats disponibles :\"
+for file in config/formats/*.xml; do
+    base=$(basename \"$file\" .xml)
+    echo \"- $base\"
+done"

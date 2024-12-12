@@ -40,3 +40,7 @@ data/
 
 # Ignorer les fichiers de configuration perso
 perso/
+
+# Ignorer les fichiers de diff
+*.rej
+*.orig

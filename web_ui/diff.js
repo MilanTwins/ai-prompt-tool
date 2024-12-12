@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       currentDir = dirData.currentDir;
     }
   } catch(e) {
-    console.error("Impossible de récupérer le répertoire courant depuis le serveur:", e);
+    console.error("Unable to retrieve current directory from server:", e);
   }
 
   function updateSelectedDirDisplay(dir) {
@@ -136,12 +136,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         body: JSON.stringify({ ai_response: aiResponseText })
       });
 
-      if(!applyRes.ok) {
-        const error = await applyRes.text();
-        throw new Error(error);
-      }
-
       const result = await applyRes.json();
+
+      if(!applyRes.ok) {
+        let errorMessage = "Erreur: ";
+        if (result.details) {
+          errorMessage += "\n\n" + result.details;
+        } else if (result.error) {
+          errorMessage += result.error;
+        }
+        diffOutput.textContent = errorMessage;
+        return;
+      }
       
       // Afficher le résultat
       let output = "Modifications appliquées avec succès!\n\nRésumé des changements:\n";

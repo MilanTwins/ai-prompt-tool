@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -16,32 +16,32 @@
 
     <h1>Project Dashboard</h1>
     <div class="settings">
-      <h2>Chemin du répertoire source</h2>
+      <h2>Source Directory Path</h2>
       <input type="text" id="sourceDir" placeholder="Ex: /home/user/myproject" readonly />
-      <button id="chooseDirBtn">Choisir un répertoire</button>
+      <button id="chooseDirBtn">Choose Directory</button>
       <div id="selectedDirInfo"></div>
 
-      <h2>Formats disponibles</h2>
+      <h2>Available Formats</h2>
       <select id="formatSelect"></select>
       
       <h2>Final Request (final_request.yaml)</h2>
-      <textarea id="finalRequest" rows="5" placeholder="Tapez votre final_request.yaml ici..."></textarea>
+      <textarea id="finalRequest" rows="5" placeholder="Type your final_request.yaml here..."></textarea>
     </div>
-    <button id="generateBtn">Générer</button>
+    <button id="generateBtn">Let's generate</button>
     <div class="output">
-      <h2>Prompt généré</h2>
+      <h2>Generated Prompt</h2>
       <pre id="promptOutput"></pre>
     </div>
   </div>
 
-  <!-- Modal pour explorer les répertoires -->
+  <!-- Directory explorer modal -->
   <div id="dirModal" class="modal">
     <div class="modal-content">
-      <h2>Explorer les répertoires</h2>
+      <h2>Browse Directories</h2>
       <div id="pathDisplay"></div>
       <div id="dirList"></div>
-      <button id="selectThisDirBtn">Sélectionner ce répertoire</button>
-      <button id="closeModalBtn">Fermer</button>
+      <button id="selectThisDirBtn">Select This Directory</button>
+      <button id="closeModalBtn">Close</button>
     </div>
   </div>
 
