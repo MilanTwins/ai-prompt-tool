@@ -11,6 +11,98 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'web_ui')));
 app.use(express.json()); // Add JSON body parser middleware
 
+// Get file structure for a directory
+app.post('/api/getFileStructure', (req, res) => {
+  const userConfigPath = path.join(__dirname, 'config', 'user_config.yaml');
+  try {
+    const userConfig = yaml.load(fs.readFileSync(userConfigPath, 'utf-8')) || {};
+    const sourceDir = userConfig.source_directory;
+    const excludePatterns = userConfig.exclude_patterns || [];
+
+    function isExcluded(filePath) {
+      const normalizedPath = filePath.replace(/\\/g, '/');
+      return excludePatterns.some(pattern => {
+        if (pattern.includes('*')) {
+          const regexPattern = pattern.replace(/\*/g, '.*');
+          return new RegExp(regexPattern).test(normalizedPath);
+        }
+        return normalizedPath.includes(pattern);
+      });
+    }
+
+    function buildTree(dir, relativePath = '') {
+      const items = fs.readdirSync(dir, { withFileTypes: true });
+      const tree = [];
+
+      for (const item of items) {
+        const fullPath = path.join(dir, item.name);
+        const itemRelativePath = path.join(relativePath, item.name);
+        
+        if (isExcluded(itemRelativePath)) continue;
+
+        if (item.isDirectory()) {
+          const children = buildTree(fullPath, itemRelativePath);
+          if (children.length > 0) {
+            tree.push({
+              name: item.name,
+              path: itemRelativePath,
+              type: 'directory',
+              children
+            });
+          }
+        } else {
+          tree.push({
+            name: item.name,
+            path: itemRelativePath,
+            type: 'file'
+          });
+        }
+      }
+
+      return tree;
+    }
+
+    if (!sourceDir) {
+      return res.status(400).json({ error: 'No source directory configured' });
+    }
+
+    const tree = buildTree(sourceDir);
+    res.json(tree);
+  } catch (error) {
+    console.error('Error getting file structure:', error);
+    res.status(500).json({ error: 'Failed to get file structure' });
+  }
+});
+
+// Save selected files
+app.post('/api/saveSelectedFiles', (req, res) => {
+  const { selectedFiles } = req.body;
+  const userConfigPath = path.join(__dirname, 'config', 'user_config.yaml');
+  
+  try {
+    let config = yaml.load(fs.readFileSync(userConfigPath, 'utf-8')) || {};
+    config.selected_files = selectedFiles;
+    fs.writeFileSync(userConfigPath, yaml.dump(config), 'utf-8');
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error saving selected files:', error);
+    res.status(500).json({ error: 'Failed to save selected files' });
+  }
+});
+
+// Get selected files
+app.get('/api/getSelectedFiles', (req, res) => {
+  const userConfigPath = path.join(__dirname, 'config', 'user_config.yaml');
+  
+  try {
+    const config = yaml.load(fs.readFileSync(userConfigPath, 'utf-8')) || {};
+    res.json(config.selected_files || []);
+  } catch (error) {
+    console.error('Error getting selected files:', error);
+    res.status(500).json({ error: 'Failed to get selected files' });
+  }
+});
+
 // Liste des formats disponibles
 app.get('/api/formats', (req, res) => {
   const formatsDir = path.join(__dirname, 'config', 'formats');
@@ -54,7 +146,6 @@ app.post('/api/updateFinalRequest', (req, res) => {
   const { final_request } = req.body;
   const finalRequestPath = path.join(__dirname, 'config', 'final_request.yaml');
   try {
-    // Use proper YAML dumping for the final request
     const content = yaml.dump({
       final_request: final_request
     });
@@ -89,28 +180,22 @@ app.post('/api/generate', (req, res) => {
 // Applique les modifications depuis la réponse de l'AI
 app.post('/api/applyDiff', (req, res) => {
   const { ai_response } = req.body;
-  
-  // Créer un fichier temporaire pour la réponse de l'AI
   const tmpFile = path.join(os.tmpdir(), `ai_response_${Date.now()}.txt`);
   
   try {
-    // Écrire la réponse de l'AI dans le fichier temporaire
     fs.writeFileSync(tmpFile, ai_response, 'utf-8');
     
-    // Exécuter le script apply_diff.py
     exec(`python3 scripts/apply_diff.py "${tmpFile}"`, { cwd: __dirname }, (error, stdout, stderr) => {
-      // Supprimer le fichier temporaire
       fs.unlinkSync(tmpFile);
       
       if (error) {
         console.error("Erreur application diff:", stderr || stdout);
         return res.status(500).json({ 
           error: 'Error applying diff',
-          details: stderr || stdout // Send complete error output
+          details: stderr || stdout
         });
       }
       
-      // Parser la sortie pour extraire les informations sur les changements
       const changes = [];
       const lines = stdout.split('\n');
       let summaryStarted = false;
@@ -136,14 +221,13 @@ app.post('/api/applyDiff', (req, res) => {
       res.json({ success: true, changes });
     });
   } catch(e) {
-    // En cas d'erreur, s'assurer que le fichier temporaire est supprimé
     if (fs.existsSync(tmpFile)) {
       fs.unlinkSync(tmpFile);
     }
     console.error(e);
     res.status(500).json({ 
       error: 'Failed to apply diff',
-      details: e.message // Include error details
+      details: e.message
     });
   }
 });

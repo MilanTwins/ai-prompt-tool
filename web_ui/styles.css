@@ -1,170 +1,174 @@
 body {
-  font-family: sans-serif;
+  font-family: Arial, sans-serif;
   margin: 0;
-  padding: 0;
-  background: #f9f9f9;
-  color: #333;
+  padding: 20px;
+  background-color: #f5f5f5;
 }
 
 .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: white;
   padding: 20px;
-  max-width: 800px;
-  margin: auto;
-  background: #fff;
   border-radius: 8px;
-  margin-top: 40px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-/* Navigation styles */
-.navigation {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #eee;
-}
-
-.navigation button {
-  flex: 1;
-  margin: 0;
-  background: #f8f9fa;
-  color: #333;
-  border: 1px solid #dee2e6;
-}
-
-.navigation button:hover {
-  background: #e9ecef;
-}
-
-.navigation button.active {
-  background: #007BFF;
-  color: #fff;
-  border: 1px solid #0056b3;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-weight: 300;
+  color: #333;
+  margin-bottom: 30px;
 }
 
-.settings, .output {
-  margin-bottom: 20px;
+h2 {
+  color: #444;
+  margin-top: 20px;
 }
 
-.settings h2, .output h2 {
-  margin-bottom: 10px;
-  font-weight: 400;
+.settings {
+  margin-bottom: 30px;
 }
 
-textarea, select, input {
+input[type="text"], select, textarea {
   width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 10px;
   padding: 8px;
-  border: 1px solid #ccc;
+  margin: 8px 0;
+  border: 1px solid #ddd;
   border-radius: 4px;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
 }
 
 button {
-  margin-bottom: 20px;
-  padding: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  background: #007BFF;
-  color: #fff;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
   border: none;
   border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
 }
 
 button:hover {
-  background: #0069d9;
+  background-color: #45a049;
+}
+
+.output {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f8f8f8;
+  border-radius: 4px;
 }
 
 pre {
-  background: #f0f0f0;
-  padding: 10px;
   white-space: pre-wrap;
   word-wrap: break-word;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  max-height: 400px;
-  overflow-y: auto;
 }
 
 .modal {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.4);
-  display: none;
-  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-content {
-  background: #fff;
-  margin: 5% auto;
+  background-color: white;
+  margin: 10% auto;
   padding: 20px;
-  max-width: 600px;
-  border-radius: 5px;
+  width: 80%;
+  max-width: 800px;
+  border-radius: 8px;
   max-height: 80vh;
-  display: flex;
-  flex-direction: column;
-}
-
-#dirList {
-  border: 1px solid #ccc;
-  background: #fafafa;
-  border-radius: 4px;
-  padding: 5px;
-  overflow-y: auto; /* scroll si trop grand */
-  flex: 1; /* pour prendre l'espace dispo */
-  margin-bottom: 10px;
+  overflow-y: auto;
 }
 
 .dir-item {
   padding: 8px;
-  border: 1px solid #eee;
   cursor: pointer;
-  margin: 5px 0;
-  background: #ffffff;
-  border-radius: 4px;
+  border-bottom: 1px solid #eee;
 }
 
 .dir-item:hover {
-  background: #eaeaea;
+  background-color: #f0f0f0;
 }
 
-#pathDisplay {
-  margin-bottom: 10px;
-  font-size: 14px;
-  font-weight: 500;
+.navigation {
+  margin-bottom: 20px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
 }
 
-/* Specific styles for diff page */
-#aiResponse {
-  min-height: 200px;
-  font-family: monospace;
-  resize: vertical;
+.navigation button {
+  background-color: #666;
+  margin-right: 10px;
 }
 
-#diffOutput {
-  font-family: monospace;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  padding: 15px;
-  margin-top: 10px;
-  max-height: 400px;
-  overflow-y: auto;
+.navigation button.active {
+  background-color: #4CAF50;
 }
 
 #selectedDirInfo {
-  margin: 10px 0;
-  padding: 8px;
-  background: #e9ecef;
+  margin-top: 10px;
+  color: #666;
+}
+
+/* New styles for file tree */
+.file-tree {
+  max-height: 500px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.tree-item {
+  padding: 4px 0;
+}
+
+.tree-item label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.tree-item input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.tree-children {
+  margin-left: 20px;
+}
+
+.tree-item .folder-icon::before {
+  content: "📁";
+  margin-right: 5px;
+}
+
+.tree-item .file-icon::before {
+  content: "📄";
+  margin-right: 5px;
+}
+
+.tree-item.expanded .folder-icon::before {
+  content: "📂";
+}
+
+.file-selection-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.file-selection-header button {
+  padding: 5px 10px;
+  font-size: 0.9em;
 }
