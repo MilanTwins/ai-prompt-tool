@@ -1,63 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Project Dashboard</title>
-  <link rel="stylesheet" href="styles.css"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Project Dashboard</title>
+    <link rel="stylesheet" href="styles/main.css"/>
 </head>
 <body>
-  <div class="container">
-    <nav class="navigation">
-      <button class="active">Prompt Generator</button>
-      <button onclick="window.location.href='configuration.html'">Configuration</button>
-      <button onclick="window.location.href='diff.html'">Apply Changes</button>
-    </nav>
+    <div class="container">
+        <nav class="navigation" id="mainNav"></nav>
 
-    <h1>Project Dashboard</h1>
-    <div class="settings">
-      <h2>Source Directory Path</h2>
-      <input type="text" id="sourceDir" placeholder="Ex: /home/user/myproject" readonly />
-      <button id="chooseDirBtn">Choose Directory</button>
-      <div id="selectedDirInfo"></div>
+        <h1>Project Dashboard</h1>
+        <div class="settings">
+            <h2>Source Directory Path</h2>
+            <input type="text" id="sourceDir" placeholder="Ex: /home/user/myproject" readonly />
+            <button id="chooseDirBtn">Choose Directory</button>
+            <div id="selectedDirInfo"></div>
 
-      <h2>Project Files</h2>
-      <div class="file-selection-header">
-        <div class="file-selection-info">
-          <span>Select files to include in prompt generation:</span>
-          <div class="info-message">Note: All files are selected by default for optimal prompt generation</div>
+            <h2>Project Files</h2>
+            <div class="file-selection-header">
+                <div class="file-selection-info">
+                    <span>Select files to include in prompt generation:</span>
+                    <div class="info-message">Note: All files are selected by default for optimal prompt generation</div>
+                </div>
+                <div>
+                    <button id="selectAllBtn">Restore Default Selection</button>
+                    <button id="deselectAllBtn">Clear Selection</button>
+                </div>
+            </div>
+            <div id="fileTree" class="file-tree"></div>
+
+            <h2>Available Formats</h2>
+            <select id="formatSelect"></select>
+            
+            <h2>Final Request (final_request.yaml)</h2>
+            <textarea id="finalRequest" rows="5" placeholder="Type your final_request.yaml here..."></textarea>
         </div>
-        <div>
-          <button id="selectAllBtn">Restore Default Selection</button>
-          <button id="deselectAllBtn">Clear Selection</button>
+        <button id="generateBtn">Let's generate</button>
+        <div class="output">
+            <h2>Generated Prompt</h2>
+            <pre id="promptOutput"></pre>
         </div>
-      </div>
-      <div id="fileTree" class="file-tree"></div>
-
-      <h2>Available Formats</h2>
-      <select id="formatSelect"></select>
-      
-      <h2>Final Request (final_request.yaml)</h2>
-      <textarea id="finalRequest" rows="5" placeholder="Type your final_request.yaml here..."></textarea>
     </div>
-    <button id="generateBtn">Let's generate</button>
-    <div class="output">
-      <h2>Generated Prompt</h2>
-      <pre id="promptOutput"></pre>
-    </div>
-  </div>
 
-  <!-- Directory explorer modal -->
-  <div id="dirModal" class="modal">
-    <div class="modal-content">
-      <h2>Browse Directories</h2>
-      <div id="pathDisplay"></div>
-      <div id="dirList"></div>
-      <button id="selectThisDirBtn">Select This Directory</button>
-      <button id="closeModalBtn">Close</button>
+    <!-- Directory explorer modal -->
+    <div id="dirModal" class="modal">
+        <div class="modal-content">
+            <h2>Browse Directories</h2>
+            <div id="pathDisplay"></div>
+            <div id="dirList"></div>
+            <button id="selectThisDirBtn">Select This Directory</button>
+            <button id="closeModalBtn">Close</button>
+        </div>
     </div>
-  </div>
 
-  <script src="main.js"></script>
+    <script type="module">
+        import Navigation from './components/Navigation.js';
+        import DirectoryModal from './components/DirectoryModal.js';
+        import FileTree from './components/FileTree.js';
+        import ApiService from './services/api.js';
+        import StateService from './services/state.js';
+        import { clipboardUtils, errorUtils, loadingUtils } from './utils/common.js';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize components
+            const navigation = new Navigation(document.getElementById('mainNav'));
+            const directoryModal = new DirectoryModal();
+            const fileTree = new FileTree(document.getElementById('fileTree'));
+
+            const formatSelect = document.getElementById('formatSelect');
+            const finalRequest = document.getElementById('finalRequest');
+            const sourceDirInput = document.getElementById('sourceDir');
+            const generateBtn = document.getElementById('generateBtn');
+            const promptOutput = document.getElementById('promptOutput');
+            const chooseDirBtn = document.getElementById('chooseDirBtn');
+            const selectAllBtn = document.getElementById('selectAllBtn');
+            const deselectAllBtn = document.getElementById('deselectAllBtn');
+            const selectedDirInfo = document.getElementById('selectedDirInfo');
+
+            // Load formats
+            try {
+                const formats = await ApiService.getFormats();
+                formats.forEach(fmt => {
+                    const option = document.createElement('option');
+                    option.value = fmt;
+                    option.textContent = fmt;
+                    formatSelect.appendChild(option);
+                });
+            } catch (error) {
+                errorUtils.handleError(error, 'loading formats');
+            }
+
+            // Directory selection
+            chooseDirBtn.addEventListener('click', () => {
+                directoryModal.show(async (selectedDir) => {
+                    sourceDirInput.value = selectedDir;
+                    selectedDirInfo.textContent = `Selected directory: ${selectedDir}`;
+                    
+                    try {
+                        await ApiService.updateSource(selectedDir);
+                        await fileTree.loadFileTree();
+                    } catch (error) {
+                        errorUtils.handleError(error, 'updating source directory');
+                    }
+                });
+            });
+
+            // File selection buttons
+            selectAllBtn.addEventListener('click', () => fileTree.selectAll());
+            deselectAllBtn.addEventListener('click', () => fileTree.deselectAll());
+
+            // Generate prompt
+            generateBtn.addEventListener('click', async () => {
+                const chosenFormat = formatSelect.value;
+                const finalReqContent = finalRequest.value;
+                const sourceDir = sourceDirInput.value.trim();
+
+                if (!sourceDir) {
+                    alert("Please select a source directory before generating.");
+                    return;
+                }
+
+                try {
+                    loadingUtils.showLoading(generateBtn);
+
+                    await ApiService.updateSource(sourceDir);
+                    await ApiService.updateFinalRequest(finalReqContent);
+                    
+                    const prompt = await ApiService.generatePrompt(chosenFormat);
+                    promptOutput.textContent = prompt;
+
+                    const copied = await clipboardUtils.copyToClipboard(prompt);
+                    if (copied) {
+                        alert("Prompt copied to clipboard!");
+                    }
+                } catch (error) {
+                    errorUtils.handleError(error, 'generating prompt');
+                    promptOutput.textContent = "Error generating prompt.";
+                } finally {
+                    loadingUtils.hideLoading(generateBtn);
+                }
+            });
+
+            // Initialize current directory
+            try {
+                const dirData = await ApiService.getCurrentDir();
+                if (dirData.currentDir) {
+                    sourceDirInput.value = dirData.currentDir;
+                    selectedDirInfo.textContent = `Selected directory: ${dirData.currentDir}`;
+                    await fileTree.loadFileTree();
+                }
+            } catch (error) {
+                errorUtils.handleError(error, 'initializing current directory');
+            }
+        });
+    </script>
 </body>
 </html>

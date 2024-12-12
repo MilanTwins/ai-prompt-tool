@@ -4,15 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuration</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
     <div class="container">
-        <nav class="navigation">
-            <button onclick="window.location.href='index.html'">Prompt Generator</button>
-            <button class="active">Configuration</button>
-            <button onclick="window.location.href='diff.html'">Apply Changes</button>
-        </nav>
+        <nav class="navigation" id="mainNav"></nav>
 
         <h1>Configuration</h1>
         
@@ -29,6 +25,117 @@
             <button id="saveSelectionBtn">Update Selection</button>
         </div>
     </div>
-    <script src="configuration.js"></script>
+
+    <script type="module">
+        import Navigation from './components/Navigation.js';
+        import ApiService from './services/api.js';
+        import StateService from './services/state.js';
+        import { errorUtils, loadingUtils, yamlUtils } from './utils/common.js';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize components
+            const navigation = new Navigation(document.getElementById('mainNav'));
+
+            const projectDataSelect = document.getElementById('projectDataSelect');
+            const userConfigSelect = document.getElementById('userConfigSelect');
+            const saveSelectionBtn = document.getElementById('saveSelectionBtn');
+
+            let selectedProjectData = null;
+            let selectedUserConfig = null;
+
+            // Load default selections from user_config.yaml
+            async function loadDefaultSelections() {
+                try {
+                    const configText = await ApiService.getConfigContent('user_config.yaml');
+                    const config = yamlUtils.parseConfig(configText);
+                    
+                    selectedProjectData = config.selectedProjectData;
+                    selectedUserConfig = config.selectedUserConfig;
+
+                    console.log("Default values loaded:", {selectedProjectData, selectedUserConfig});
+                } catch (error) {
+                    errorUtils.handleError(error, 'loading defaults');
+                }
+            }
+
+            // Load available configurations
+            async function loadConfigs() {
+                try {
+                    loadingUtils.showLoading(saveSelectionBtn);
+                    const data = await ApiService.listConfigs();
+
+                    // Filter out final_request.yaml
+                    const filteredConfigs = data.configs.filter(c => c !== 'final_request.yaml');
+                    console.log("Available configs:", filteredConfigs);
+
+                    // Clear existing options
+                    projectDataSelect.innerHTML = '';
+                    userConfigSelect.innerHTML = '';
+
+                    // Add options to both selects
+                    filteredConfigs.forEach(config => {
+                        const pdOpt = document.createElement('option');
+                        pdOpt.value = config;
+                        pdOpt.textContent = config;
+                        projectDataSelect.appendChild(pdOpt);
+
+                        const ucOpt = document.createElement('option');
+                        ucOpt.value = config;
+                        ucOpt.textContent = config;
+                        userConfigSelect.appendChild(ucOpt);
+                    });
+
+                    // Set default selections if available
+                    if (selectedProjectData && filteredConfigs.includes(selectedProjectData)) {
+                        projectDataSelect.value = selectedProjectData;
+                    }
+                    if (selectedUserConfig && filteredConfigs.includes(selectedUserConfig)) {
+                        userConfigSelect.value = selectedUserConfig;
+                    }
+
+                    console.log("Selectors set to:", {
+                        projectData: projectDataSelect.value,
+                        userConfig: userConfigSelect.value
+                    });
+                } catch (error) {
+                    errorUtils.handleError(error, 'loading configs');
+                } finally {
+                    loadingUtils.hideLoading(saveSelectionBtn);
+                }
+            }
+
+            // Save selected configurations
+            async function saveSelection() {
+                const projectDataFile = projectDataSelect.value;
+                const userConfigFile = userConfigSelect.value;
+
+                if (!projectDataFile || !userConfigFile) {
+                    alert("Please select both Project Data and User Config files.");
+                    return;
+                }
+
+                try {
+                    loadingUtils.showLoading(saveSelectionBtn);
+                    const result = await ApiService.updateSelectedConfigs(projectDataFile, userConfigFile);
+                    
+                    if (result.success) {
+                        alert("Configuration selection saved successfully!");
+                    }
+                } catch (error) {
+                    errorUtils.handleError(error, 'saving selection');
+                    alert("Error saving configuration selection.");
+                } finally {
+                    loadingUtils.hideLoading(saveSelectionBtn);
+                }
+            }
+
+            // Add event listener for save button
+            saveSelectionBtn.addEventListener('click', saveSelection);
+
+            // Initialize the page
+            await loadDefaultSelections();
+            await loadConfigs();
+        });
+    </script>
 </body>
 </html>

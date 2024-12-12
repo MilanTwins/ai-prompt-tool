@@ -1,50 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Apply AI Changes</title>
-  <link rel="stylesheet" href="styles.css"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Apply AI Changes</title>
+    <link rel="stylesheet" href="styles/main.css"/>
 </head>
 <body>
-  <div class="container">
-    <nav class="navigation">
-      <button onclick="window.location.href='index.html'">Prompt Generator</button>
-      <button onclick="window.location.href='configuration.html'">Configuration</button>
-      <button class="active">Apply Changes</button>
-    </nav>
+    <div class="container">
+        <nav class="navigation" id="mainNav"></nav>
 
-    <h1>Apply AI Changes</h1>
-    
-    <div class="settings">
-      <h2>Source Directory Path</h2>
-      <input type="text" id="sourceDir" placeholder="Select a directory to apply changes" readonly />
-      <button id="chooseDirBtn">Choose Directory</button>
-      <div id="selectedDirInfo"></div>
+        <h1>Apply AI Changes</h1>
+        
+        <div class="settings">
+            <h2>Source Directory Path</h2>
+            <input type="text" id="sourceDir" placeholder="Select a directory to apply changes" readonly />
+            <button id="chooseDirBtn">Choose Directory</button>
+            <div id="selectedDirInfo"></div>
 
-      <h2>AI Response</h2>
-      <textarea id="aiResponse" rows="10" placeholder="Paste the AI response containing modifications (diff) here..."></textarea>
-      
-      <button id="applyChangesBtn">Apply Changes</button>
+            <h2>AI Response</h2>
+            <textarea id="aiResponse" rows="10" placeholder="Paste the AI response containing modifications (diff) here..."></textarea>
+            
+            <button id="applyChangesBtn">Apply Changes</button>
+        </div>
+
+        <div class="output">
+            <h2>Result</h2>
+            <pre id="diffOutput"></pre>
+        </div>
     </div>
 
-    <div class="output">
-      <h2>Result</h2>
-      <pre id="diffOutput"></pre>
+    <!-- Directory explorer modal -->
+    <div id="dirModal" class="modal">
+        <div class="modal-content">
+            <h2>Browse Directories</h2>
+            <div id="pathDisplay"></div>
+            <div id="dirList"></div>
+            <button id="selectThisDirBtn">Select This Directory</button>
+            <button id="closeModalBtn">Close</button>
+        </div>
     </div>
-  </div>
 
-  <!-- Directory explorer modal -->
-  <div id="dirModal" class="modal">
-    <div class="modal-content">
-      <h2>Browse Directories</h2>
-      <div id="pathDisplay"></div>
-      <div id="dirList" class="directory-list"></div>
-      <button id="selectThisDirBtn">Select This Directory</button>
-      <button id="closeModalBtn">Close</button>
-    </div>
-  </div>
+    <script type="module">
+        import Navigation from './components/Navigation.js';
+        import DirectoryModal from './components/DirectoryModal.js';
+        import ApiService from './services/api.js';
+        import StateService from './services/state.js';
+        import { errorUtils, loadingUtils } from './utils/common.js';
 
-  <script src="diff.js"></script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize components
+            const navigation = new Navigation(document.getElementById('mainNav'));
+            const directoryModal = new DirectoryModal();
+
+            const sourceDirInput = document.getElementById('sourceDir');
+            const aiResponse = document.getElementById('aiResponse');
+            const applyChangesBtn = document.getElementById('applyChangesBtn');
+            const diffOutput = document.getElementById('diffOutput');
+            const chooseDirBtn = document.getElementById('chooseDirBtn');
+            const selectedDirInfo = document.getElementById('selectedDirInfo');
+
+            // Initialize current directory
+            try {
+                const dirData = await ApiService.getCurrentDir();
+                if (dirData.currentDir) {
+                    sourceDirInput.value = dirData.currentDir;
+                    selectedDirInfo.textContent = `Selected directory: ${dirData.currentDir}`;
+                }
+            } catch (error) {
+                errorUtils.handleError(error, 'initializing current directory');
+            }
+
+            // Directory selection
+            chooseDirBtn.addEventListener('click', () => {
+                directoryModal.show(async (selectedDir) => {
+                    sourceDirInput.value = selectedDir;
+                    selectedDirInfo.textContent = `Selected directory: ${selectedDir}`;
+                    
+                    try {
+                        await ApiService.updateSource(selectedDir);
+                    } catch (error) {
+                        errorUtils.handleError(error, 'updating source directory');
+                    }
+                });
+            });
+
+            // Apply changes
+            applyChangesBtn.addEventListener('click', async () => {
+                const sourceDir = sourceDirInput.value.trim();
+                const aiResponseText = aiResponse.value.trim();
+
+                if (!sourceDir) {
+                    alert("Please select a source directory before applying changes.");
+                    return;
+                }
+
+                if (!aiResponseText) {
+                    alert("Please paste the AI response containing the modifications to apply.");
+                    return;
+                }
+
+                try {
+                    loadingUtils.showLoading(applyChangesBtn);
+
+                    // Update source directory
+                    await ApiService.updateSource(sourceDir);
+                    
+                    // Apply modifications
+                    const result = await ApiService.applyDiff(aiResponseText);
+                    
+                    // Display result
+                    let output = "Changes applied successfully!\n\nSummary of changes:\n";
+                    result.changes.forEach(change => {
+                        output += `- ${change.file}: +${change.additions} lines, -${change.deletions} lines\n`;
+                    });
+                    
+                    diffOutput.textContent = output;
+                } catch (error) {
+                    errorUtils.handleError(error, 'applying changes');
+                    let errorMessage = "Error: ";
+                    if (error.details) {
+                        errorMessage += "\n\n" + error.details;
+                    } else if (error.message) {
+                        errorMessage += error.message;
+                    }
+                    diffOutput.textContent = errorMessage;
+                } finally {
+                    loadingUtils.hideLoading(applyChangesBtn);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

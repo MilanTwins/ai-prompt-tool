@@ -1,0 +1,78 @@
+.file-tree {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #fff;
+}
+
+.tree-item {
+    padding: 4px 0;
+}
+
+.tree-item label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.tree-item input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.tree-children {
+    margin-left: 20px;
+    border-left: 1px dotted #ddd;
+    padding-left: 10px;
+}
+
+.tree-item .folder-icon::before {
+    content: "📁";
+    margin-right: 5px;
+}
+
+.tree-item .file-icon::before {
+    content: "📄";
+    margin-right: 5px;
+}
+
+.tree-item.expanded .folder-icon::before {
+    content: "📂";
+}
+
+.file-selection-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.file-selection-info {
+    flex-grow: 1;
+}
+
+.info-message {
+    margin-top: 5px;
+    color: #666;
+    font-style: italic;
+    padding: 5px 10px;
+    background-color: #f8f8f8;
+    border-left: 3px solid #4CAF50;
+    border-radius: 2px;
+}
+
+.file-selection-header button {
+    padding: 5px 10px;
+    font-size: 0.9em;
+}
+
+.tree-item:hover {
+    background-color: #f5f5f5;
+    border-radius: 4px;
+}
+
+.tree-item label:hover {
+    color: #4CAF50;
+}

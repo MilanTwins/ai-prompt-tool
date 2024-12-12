@@ -26,34 +26,41 @@ exclude_patterns:
 selected_project_data: project_data.yaml
 selected_user_config: user_config.yaml
 selected_files:
-  - README.md
-  - config
-  - final_request.yaml
-  - formats
-  - diff.xml
-  - gpt.xml
-  - json.xml
-  - markdown.xml
-  - none.xml
-  - xml.xml
-  - templates
-  - example_user_config.yaml
-  - user_config.yaml
-  - package.json
-  - perso
-  - projet_instruction.md
-  - run_full_process.sh
-  - scripts
-  - apply_diff.py
-  - generate_prompt.py
-  - generate_structure.py
-  - server.js
-  - prompt_template.xml.jinja2
-  - web_ui
-  - configuration.html
   - configuration.js
-  - diff.html
   - diff.js
-  - index.html
   - main.js
   - styles.css
+  - config/final_request.yaml
+  - config/formats
+  - config/formats/diff.xml
+  - config/formats/gpt.xml
+  - config/formats/json.xml
+  - config/formats/markdown.xml
+  - config/formats/none.xml
+  - config/formats/xml.xml
+  - config/templates
+  - config/templates/example_user_config.yaml
+  - config/user_config.yaml
+  - perso/projet_instruction.md
+  - scripts/apply_diff.py
+  - scripts/generate_prompt.py
+  - scripts/generate_structure.py
+  - templates/prompt_template.xml.jinja2
+  - web_ui/components
+  - web_ui/components/DirectoryModal.js
+  - web_ui/components/FileTree.js
+  - web_ui/components/Navigation.js
+  - web_ui/configuration.html
+  - web_ui/diff.html
+  - web_ui/index.html
+  - web_ui/services
+  - web_ui/services/api.js
+  - web_ui/services/state.js
+  - web_ui/styles
+  - web_ui/styles/components
+  - web_ui/styles/components/directory-modal.css
+  - web_ui/styles/components/file-tree.css
+  - web_ui/styles/components/navigation.css
+  - web_ui/styles/main.css
+  - web_ui/utils
+  - web_ui/utils/common.js
