@@ -1,29 +1,50 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Configuration Management</title>
-  <link rel="stylesheet" href="styles.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Configuration Management</h1>
+    <div class="container">
+        <nav class="navigation">
+            <button onclick="window.location.href='index.html'">Prompt Generator</button>
+            <button class="active">Configuration</button>
+            <button onclick="window.location.href='diff.html'">Apply Changes</button>
+        </nav>
 
-    <div class="settings">
-      <h2>Sélection des fichiers pour générer le prompt</h2>
-      <p>Choisissez les fichiers à utiliser comme base :</p>
-      <label for="projectDataSelect">Fichier project_data:</label>
-      <select id="projectDataSelect"></select>
-
-      <label for="userConfigSelect">Fichier user_config:</label>
-      <select id="userConfigSelect"></select>
-
-      <button id="saveSelectionBtn">Enregistrer les choix</button>
+        <h1>Configuration</h1>
+        
+        <div class="settings">
+            <h2>Templates disponibles</h2>
+            <select id="templateSelect"></select>
+            <button id="loadTemplateBtn">Charger le template</button>
+            
+            <h2>Configurations existantes</h2>
+            <select id="configSelect"></select>
+            <button id="loadConfigBtn">Charger la configuration</button>
+            
+            <h2>Édition de la configuration</h2>
+            <textarea id="configEditor" rows="15"></textarea>
+            
+            <h2>Nom de la nouvelle configuration</h2>
+            <input type="text" id="configName" placeholder="nom_config.yaml">
+            
+            <button id="saveConfigBtn">Sauvegarder la configuration</button>
+            
+            <h2>Sélection des configurations actives</h2>
+            <div>
+                <label>Project Data:</label>
+                <select id="projectDataSelect"></select>
+            </div>
+            <div>
+                <label>User Config:</label>
+                <select id="userConfigSelect"></select>
+            </div>
+            <button id="updateSelectedConfigsBtn">Mettre à jour la sélection</button>
+        </div>
     </div>
-
-    <button id="backBtn">Retour à la page principale</button>
-  </div>
-  <script src="configuration.js"></script>
+    <script src="configuration.js"></script>
 </body>
 </html>

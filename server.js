@@ -5,6 +5,7 @@ const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const yaml = require('js-yaml'); // Remplacer safeLoad par yaml.load
+const os = require('os');
 
 const app = express();
 app.use(express.json());
@@ -80,6 +81,62 @@ app.post('/api/generate', (req, res) => {
       res.send(stdout);
     });
   });
+});
+
+// Applique les modifications depuis la réponse de l'AI
+app.post('/api/applyDiff', (req, res) => {
+  const { ai_response } = req.body;
+  
+  // Créer un fichier temporaire pour la réponse de l'AI
+  const tmpFile = path.join(os.tmpdir(), `ai_response_${Date.now()}.txt`);
+  
+  try {
+    // Écrire la réponse de l'AI dans le fichier temporaire
+    fs.writeFileSync(tmpFile, ai_response, 'utf-8');
+    
+    // Exécuter le script apply_diff.py
+    exec(`python3 scripts/apply_diff.py "${tmpFile}"`, { cwd: __dirname }, (error, stdout, stderr) => {
+      // Supprimer le fichier temporaire
+      fs.unlinkSync(tmpFile);
+      
+      if (error) {
+        console.error("Erreur application diff:", stderr);
+        return res.status(500).send(stderr || 'Error applying diff');
+      }
+      
+      // Parser la sortie pour extraire les informations sur les changements
+      const changes = [];
+      const lines = stdout.split('\n');
+      let summaryStarted = false;
+      
+      for (const line of lines) {
+        if (line === 'Summary of changes:') {
+          summaryStarted = true;
+          continue;
+        }
+        
+        if (summaryStarted && line.startsWith('- ')) {
+          const match = line.match(/- (.+): \+(\d+) lines, -(\d+) lines/);
+          if (match) {
+            changes.push({
+              file: match[1],
+              additions: parseInt(match[2]),
+              deletions: parseInt(match[3])
+            });
+          }
+        }
+      }
+      
+      res.json({ success: true, changes });
+    });
+  } catch(e) {
+    // En cas d'erreur, s'assurer que le fichier temporaire est supprimé
+    if (fs.existsSync(tmpFile)) {
+      fs.unlinkSync(tmpFile);
+    }
+    console.error(e);
+    res.status(500).json({ error: 'Failed to apply diff' });
+  }
 });
 
 // Liste le contenu d'un répertoire

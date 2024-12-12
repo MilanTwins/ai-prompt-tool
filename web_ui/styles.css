@@ -16,6 +16,33 @@ body {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
+/* Navigation styles */
+.navigation {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.navigation button {
+  flex: 1;
+  margin: 0;
+  background: #f8f9fa;
+  color: #333;
+  border: 1px solid #dee2e6;
+}
+
+.navigation button:hover {
+  background: #e9ecef;
+}
+
+.navigation button.active {
+  background: #007BFF;
+  color: #fff;
+  border: 1px solid #0056b3;
+}
+
 h1 {
   text-align: center;
   margin-bottom: 20px;
@@ -113,4 +140,29 @@ pre {
   margin-bottom: 10px;
   font-size: 14px;
   font-weight: 500;
+}
+
+/* Specific styles for diff page */
+#aiResponse {
+  min-height: 200px;
+  font-family: monospace;
+  resize: vertical;
+}
+
+#diffOutput {
+  font-family: monospace;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  padding: 15px;
+  margin-top: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+#selectedDirInfo {
+  margin: 10px 0;
+  padding: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  font-size: 14px;
 }

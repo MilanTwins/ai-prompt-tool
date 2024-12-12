@@ -3,34 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Project Dashboard</title>
+  <title>Apply AI Changes</title>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
   <div class="container">
     <nav class="navigation">
-      <button class="active">Prompt Generator</button>
+      <button onclick="window.location.href='index.html'">Prompt Generator</button>
       <button onclick="window.location.href='configuration.html'">Configuration</button>
-      <button onclick="window.location.href='diff.html'">Apply Changes</button>
+      <button class="active">Apply Changes</button>
     </nav>
 
-    <h1>Project Dashboard</h1>
+    <h1>Apply AI Changes</h1>
+    
     <div class="settings">
       <h2>Chemin du répertoire source</h2>
       <input type="text" id="sourceDir" placeholder="Ex: /home/user/myproject" readonly />
       <button id="chooseDirBtn">Choisir un répertoire</button>
       <div id="selectedDirInfo"></div>
 
-      <h2>Formats disponibles</h2>
-      <select id="formatSelect"></select>
+      <h2>Réponse de l'AI</h2>
+      <textarea id="aiResponse" rows="10" placeholder="Collez la réponse de l'AI contenant les modifications (diff) ici..."></textarea>
       
-      <h2>Final Request (final_request.yaml)</h2>
-      <textarea id="finalRequest" rows="5" placeholder="Tapez votre final_request.yaml ici..."></textarea>
+      <button id="applyChangesBtn">Appliquer les modifications</button>
     </div>
-    <button id="generateBtn">Générer</button>
+
     <div class="output">
-      <h2>Prompt généré</h2>
-      <pre id="promptOutput"></pre>
+      <h2>Résultat</h2>
+      <pre id="diffOutput"></pre>
     </div>
   </div>
 
@@ -45,6 +45,6 @@
     </div>
   </div>
 
-  <script src="main.js"></script>
+  <script src="diff.js"></script>
 </body>
 </html>
