@@ -27,3 +27,33 @@ selected_project_data: project_data.yaml
 selected_user_config: user_config.yaml
 selected_files:
   - README.md
+  - config
+  - final_request.yaml
+  - formats
+  - diff.xml
+  - gpt.xml
+  - json.xml
+  - markdown.xml
+  - none.xml
+  - xml.xml
+  - templates
+  - example_user_config.yaml
+  - user_config.yaml
+  - package.json
+  - perso
+  - projet_instruction.md
+  - run_full_process.sh
+  - scripts
+  - apply_diff.py
+  - generate_prompt.py
+  - generate_structure.py
+  - server.js
+  - prompt_template.xml.jinja2
+  - web_ui
+  - configuration.html
+  - configuration.js
+  - diff.html
+  - diff.js
+  - index.html
+  - main.js
+  - styles.css

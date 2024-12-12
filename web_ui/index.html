@@ -23,10 +23,13 @@
 
       <h2>Project Files</h2>
       <div class="file-selection-header">
-        <span>Select files to include in prompt generation:</span>
+        <div class="file-selection-info">
+          <span>Select files to include in prompt generation:</span>
+          <div class="info-message">Note: All files are selected by default for optimal prompt generation</div>
+        </div>
         <div>
-          <button id="selectAllBtn">Select All</button>
-          <button id="deselectAllBtn">Deselect All</button>
+          <button id="selectAllBtn">Restore Default Selection</button>
+          <button id="deselectAllBtn">Clear Selection</button>
         </div>
       </div>
       <div id="fileTree" class="file-tree"></div>

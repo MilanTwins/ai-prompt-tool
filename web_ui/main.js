@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const label = document.createElement('label');
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.checked = selectedFiles.has(item.path);
+    checkbox.checked = true; // Set checked by default
+    selectedFiles.add(item.path); // Add to selected files by default
     
     const span = document.createElement('span');
     span.className = item.type === 'directory' ? 'folder-icon' : 'file-icon';
