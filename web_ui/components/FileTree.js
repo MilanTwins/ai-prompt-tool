@@ -26,6 +26,9 @@ class FileTree {
     async loadFileTree() {
         try {
             StateService.setLoading(true);
+            // Clear selected files when loading new tree
+            this.selectedFiles.clear();
+            
             const tree = await ApiService.getFileStructure();
             StateService.setFileTree(tree);
             
@@ -33,6 +36,9 @@ class FileTree {
             tree.forEach(item => {
                 this.container.appendChild(this.createTreeItem(item));
             });
+
+            // Save the cleared state
+            await this.saveSelectedFiles();
         } catch (error) {
             console.error('Error loading file tree:', error);
             this.container.innerHTML = '<div class="error">Failed to load file structure</div>';
@@ -44,6 +50,7 @@ class FileTree {
     createTreeItem(item) {
         const div = document.createElement('div');
         div.className = 'tree-item';
+        div.dataset.path = item.path; // Store full path in dataset
         
         const label = document.createElement('label');
         const checkbox = document.createElement('input');
@@ -81,12 +88,12 @@ class FileTree {
                 const childCheckboxes = children.querySelectorAll('input[type="checkbox"]');
                 childCheckboxes.forEach(cb => {
                     cb.checked = checkbox.checked;
-                    const itemPath = cb.closest('.tree-item').querySelector('span').textContent;
-                    const fullPath = item.path + '/' + itemPath;
+                    const childItem = cb.closest('.tree-item');
+                    const childPath = childItem.dataset.path;
                     if (checkbox.checked) {
-                        this.selectedFiles.add(fullPath);
+                        this.selectedFiles.add(childPath);
                     } else {
-                        this.selectedFiles.delete(fullPath);
+                        this.selectedFiles.delete(childPath);
                     }
                 });
                 this.saveSelectedFiles();
@@ -118,19 +125,24 @@ class FileTree {
         const checkboxes = this.container.querySelectorAll('input[type="checkbox"]');
         checkboxes.forEach(cb => {
             cb.checked = true;
-            const itemPath = cb.closest('.tree-item').querySelector('span').textContent;
-            this.selectedFiles.add(itemPath);
+            const itemPath = cb.closest('.tree-item').dataset.path;
+            if (itemPath) {
+                this.selectedFiles.add(itemPath);
+            }
         });
         this.saveSelectedFiles();
     }
 
     deselectAll() {
+        // Clear the Set first
+        this.selectedFiles.clear();
+        
         const checkboxes = this.container.querySelectorAll('input[type="checkbox"]');
         checkboxes.forEach(cb => {
             cb.checked = false;
-            const itemPath = cb.closest('.tree-item').querySelector('span').textContent;
-            this.selectedFiles.delete(itemPath);
         });
+        
+        // Save the empty selection
         this.saveSelectedFiles();
     }
 }

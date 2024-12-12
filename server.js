@@ -81,7 +81,8 @@ app.post('/api/saveSelectedFiles', (req, res) => {
   
   try {
     let config = yaml.load(fs.readFileSync(userConfigPath, 'utf-8')) || {};
-    config.selected_files = selectedFiles;
+    // Ensure selectedFiles is always an array, even if empty
+    config.selected_files = Array.isArray(selectedFiles) ? selectedFiles : [];
     fs.writeFileSync(userConfigPath, yaml.dump(config), 'utf-8');
     res.json({ success: true });
   } catch (error) {
@@ -131,6 +132,12 @@ app.post('/api/updateSource', (req, res) => {
   try {
     let yamlContent = fs.readFileSync(userConfigPath, 'utf-8');
     let doc = yaml.load(yamlContent) || {};
+    
+    // Only clear selected files if the source directory has changed
+    if (doc.source_directory !== source_directory) {
+      doc.selected_files = []; // Clear selected files when changing directory
+    }
+    
     doc.source_directory = source_directory;
     const newYaml = yaml.dump(doc);
     fs.writeFileSync(userConfigPath, newYaml, 'utf-8');
