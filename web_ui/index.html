@@ -142,18 +142,22 @@
                 }
             });
 
-            // Initialize current directory
+            // Initialize current directory from user_config.yaml
             try {
-                const dirData = await ApiService.getCurrentDir();
-                if (dirData.currentDir) {
-                    sourceDirInput.value = dirData.currentDir;
-                    selectedDirInfo.textContent = `Selected directory: ${dirData.currentDir}`;
-                    await fileTree.loadFileTree();
-                }
+                const userConfigContent = await ApiService.getConfigContent('user_config.yaml');
+                const configData = jsyaml.load(userConfigContent);
+                const sourceDirectory = configData.source_directory || '/';
+                
+                sourceDirInput.value = sourceDirectory;
+                selectedDirInfo.textContent = `Selected directory: ${sourceDirectory}`;
+                StateService.setCurrentDir(sourceDirectory);
+                
+                await fileTree.loadFileTree();
             } catch (error) {
                 errorUtils.handleError(error, 'initializing current directory');
             }
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 </body>
 </html>

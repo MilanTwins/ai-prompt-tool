@@ -60,17 +60,6 @@
             const chooseDirBtn = document.getElementById('chooseDirBtn');
             const selectedDirInfo = document.getElementById('selectedDirInfo');
 
-            // Initialize current directory
-            try {
-                const dirData = await ApiService.getCurrentDir();
-                if (dirData.currentDir) {
-                    sourceDirInput.value = dirData.currentDir;
-                    selectedDirInfo.textContent = `Selected directory: ${dirData.currentDir}`;
-                }
-            } catch (error) {
-                errorUtils.handleError(error, 'initializing current directory');
-            }
-
             // Directory selection
             chooseDirBtn.addEventListener('click', () => {
                 directoryModal.show(async (selectedDir) => {
@@ -103,10 +92,8 @@
                 try {
                     loadingUtils.showLoading(applyChangesBtn);
 
-                    // Update source directory
                     await ApiService.updateSource(sourceDir);
                     
-                    // Apply modifications
                     const result = await ApiService.applyDiff(aiResponseText);
                     
                     // Display result
@@ -129,7 +116,21 @@
                     loadingUtils.hideLoading(applyChangesBtn);
                 }
             });
+
+            // Initialize current directory from user_config.yaml
+            try {
+                const userConfigContent = await ApiService.getConfigContent('user_config.yaml');
+                const configData = jsyaml.load(userConfigContent);
+                const sourceDirectory = configData.source_directory || '/';
+                
+                sourceDirInput.value = sourceDirectory;
+                selectedDirInfo.textContent = `Selected directory: ${sourceDirectory}`;
+                StateService.setCurrentDir(sourceDirectory);
+            } catch (error) {
+                errorUtils.handleError(error, 'initializing current directory');
+            }
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 </body>
 </html>
