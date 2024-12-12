@@ -1,5 +1,40 @@
 // API Service - Centralizes all API calls
 class ApiService {
+    // ... (previous methods remain unchanged)
+
+    static async getProjectData() {
+        const response = await fetch('/api/getConfigContent', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ name: 'project_data.yaml' })
+        });
+        if (!response.ok) throw new Error('Failed to get project data');
+        return response.text();
+    }
+
+    static async getTemplateContent(templateName) {
+        const response = await fetch('/api/getTemplateContent', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ template: templateName })
+        });
+        if (!response.ok) throw new Error('Failed to get template content');
+        return response.text();
+    }
+
+    static async saveProjectData(content) {
+        const response = await fetch('/api/createCustomConfig', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                name: 'project_data.yaml',
+                configData: content
+            })
+        });
+        if (!response.ok) throw new Error('Failed to save project data');
+        return response.json();
+    }
+
     static async getCurrentDir() {
         const response = await fetch('/api/currentDir');
         if (!response.ok) throw new Error('Failed to get current directory');

@@ -23,6 +23,18 @@
                 <select id="userConfigSelect"></select>
             </div>
             <button id="saveSelectionBtn">Update Selection</button>
+
+            <h2>Project Data Configuration</h2>
+            <div class="project-data-editor">
+                <div class="editor-header">
+                    <button id="resetToTemplateBtn">Reset to Template</button>
+                    <button id="saveProjectDataBtn">Save Changes</button>
+                </div>
+                <textarea id="projectDataEditor" rows="20" placeholder="Loading project data..."></textarea>
+                <div class="editor-info">
+                    <p>This editor allows you to modify the project data configuration directly. Use the "Reset to Template" button to start fresh with the default template.</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -39,9 +51,68 @@
             const projectDataSelect = document.getElementById('projectDataSelect');
             const userConfigSelect = document.getElementById('userConfigSelect');
             const saveSelectionBtn = document.getElementById('saveSelectionBtn');
+            const projectDataEditor = document.getElementById('projectDataEditor');
+            const resetToTemplateBtn = document.getElementById('resetToTemplateBtn');
+            const saveProjectDataBtn = document.getElementById('saveProjectDataBtn');
 
             let selectedProjectData = null;
             let selectedUserConfig = null;
+
+            // Load project data content
+            async function loadProjectData() {
+                try {
+                    loadingUtils.showLoading(projectDataEditor);
+                    const content = await ApiService.getProjectData();
+                    projectDataEditor.value = content;
+                } catch (error) {
+                    errorUtils.handleError(error, 'loading project data');
+                    projectDataEditor.value = '# Error loading project data';
+                } finally {
+                    loadingUtils.hideLoading(projectDataEditor);
+                }
+            }
+
+            // Reset to template
+            resetToTemplateBtn.addEventListener('click', async () => {
+                if (!confirm('Are you sure you want to reset to the template? This will overwrite your current configuration.')) {
+                    return;
+                }
+
+                try {
+                    loadingUtils.showLoading(resetToTemplateBtn);
+                    const templateContent = await ApiService.getTemplateContent('example_project_data.yaml');
+                    projectDataEditor.value = templateContent;
+                } catch (error) {
+                    errorUtils.handleError(error, 'loading template');
+                    alert('Failed to load template');
+                } finally {
+                    loadingUtils.hideLoading(resetToTemplateBtn);
+                }
+            });
+
+            // Save project data changes
+            saveProjectDataBtn.addEventListener('click', async () => {
+                try {
+                    loadingUtils.showLoading(saveProjectDataBtn);
+                    const content = projectDataEditor.value;
+                    
+                    // Try to parse YAML to validate it
+                    try {
+                        yamlUtils.parseYaml(content);
+                    } catch (e) {
+                        alert('Invalid YAML format. Please check your syntax.');
+                        return;
+                    }
+
+                    await ApiService.saveProjectData(content);
+                    alert('Project data saved successfully!');
+                } catch (error) {
+                    errorUtils.handleError(error, 'saving project data');
+                    alert('Failed to save project data');
+                } finally {
+                    loadingUtils.hideLoading(saveProjectDataBtn);
+                }
+            });
 
             // Load default selections from user_config.yaml
             async function loadDefaultSelections() {
@@ -135,6 +206,7 @@
             // Initialize the page
             await loadDefaultSelections();
             await loadConfigs();
+            await loadProjectData();
         });
     </script>
 </body>

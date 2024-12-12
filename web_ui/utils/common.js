@@ -89,6 +89,39 @@ export const yamlUtils = {
             selectedProjectData: selectedProjectDataMatch ? selectedProjectDataMatch[1].trim() : null,
             selectedUserConfig: selectedUserConfigMatch ? selectedUserConfigMatch[1].trim() : null
         };
+    },
+
+    parseYaml(text) {
+        try {
+            // Basic YAML validation
+            const lines = text.split('\n');
+            let indentLevel = 0;
+            
+            for (const line of lines) {
+                if (line.trim() === '' || line.trim().startsWith('#')) continue;
+                
+                const indent = line.match(/^\s*/)[0].length;
+                const content = line.trim();
+                
+                // Check basic YAML syntax
+                if (content.includes(':')) {
+                    const [key, value] = content.split(':');
+                    if (!key.trim()) throw new Error('Invalid key in YAML');
+                    
+                    // Check indentation
+                    if (indent % 2 !== 0) throw new Error('Invalid indentation');
+                    
+                    indentLevel = indent;
+                } else if (content.startsWith('-')) {
+                    // Check list item indentation
+                    if (indent <= indentLevel) throw new Error('Invalid list indentation');
+                }
+            }
+            
+            return true;
+        } catch (error) {
+            throw new Error(`Invalid YAML: ${error.message}`);
+        }
     }
 };
 

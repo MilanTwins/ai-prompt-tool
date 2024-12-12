@@ -146,3 +146,79 @@ pre {
     margin: 10px 0;
     border: 1px solid #c8e6c9;
 }
+
+/* Project Data Editor styles */
+.project-data-editor {
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    background-color: #f8f8f8;
+}
+
+.editor-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.editor-header button {
+    margin-left: 10px;
+}
+
+#resetToTemplateBtn {
+    background-color: #ff9800;
+}
+
+#resetToTemplateBtn:hover {
+    background-color: #f57c00;
+}
+
+#projectDataEditor {
+    width: 100%;
+    min-height: 400px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.editor-info {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #e3f2fd;
+    border-radius: 4px;
+    color: #1976d2;
+    font-size: 0.9em;
+}
+
+/* Configuration selection styles */
+.settings > div {
+    margin-bottom: 15px;
+}
+
+.settings label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+    font-weight: bold;
+}
+
+.settings select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.settings select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
