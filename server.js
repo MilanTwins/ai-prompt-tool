@@ -9,6 +9,7 @@ const os = require('os');
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'web_ui')));
+app.use(express.json()); // Add JSON body parser middleware
 
 // Liste des formats disponibles
 app.get('/api/formats', (req, res) => {
