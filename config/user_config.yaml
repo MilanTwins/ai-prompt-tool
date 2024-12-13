@@ -36,6 +36,7 @@ selected_files:
   - config/formats/json.txt
   - config/formats/markdown.txt
   - config/formats/none.txt
+  - config/formats/structured.txt
   - config/formats/xml.txt
   - config/templates
   - config/templates/example_user_config.yaml
@@ -50,6 +51,7 @@ selected_files:
   - scripts/generate_structure.py
   - server.js
   - templates
+  - templates/prompt_template.txt.jinja2
   - templates/prompt_template.xml.jinja2
   - web_ui
   - web_ui/components

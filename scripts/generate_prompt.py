@@ -7,17 +7,38 @@ from jinja2 import Environment, FileSystemLoader
 
 def load_user_config():
     with open("config/user_config.yaml", "r", encoding="utf-8") as f:
-        return yaml.load(f, Loader=yaml.SafeLoader)
+        return yaml.safe_load(f) or {}
 
 def load_project_data():
     user_conf = load_user_config()
     project_data_file = user_conf.get("selected_project_data", "project_data.yaml")
-    with open(f"config/{project_data_file}", "r", encoding="utf-8") as f:
-        return yaml.load(f, Loader=yaml.SafeLoader)
+    
+    # Si le fichier sélectionné n'existe pas, utiliser project_data.yaml
+    if not os.path.exists(f"config/{project_data_file}"):
+        print(f"Warning: Selected project data file 'config/{project_data_file}' not found, using project_data.yaml")
+        project_data_file = "project_data.yaml"
+    
+    try:
+        with open(f"config/{project_data_file}", "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+            # Si le fichier est vide ou ne contient pas les données attendues, utiliser project_data.yaml
+            if not data or "project_name" not in data:
+                print(f"Warning: '{project_data_file}' does not contain valid project data, using project_data.yaml")
+                with open("config/project_data.yaml", "r", encoding="utf-8") as f2:
+                    return yaml.safe_load(f2) or {}
+            return data
+    except Exception as e:
+        print(f"Error loading project data: {e}, using project_data.yaml")
+        try:
+            with open("config/project_data.yaml", "r", encoding="utf-8") as f:
+                return yaml.safe_load(f) or {}
+        except Exception as e2:
+            print(f"Error loading project_data.yaml: {e2}")
+            return {}
 
 def load_final_request():
     with open("config/final_request.yaml", "r", encoding="utf-8") as f:
-        data = yaml.load(f, Loader=yaml.SafeLoader)
+        data = yaml.safe_load(f) or {}
     return data.get("final_request", "Please explain the codebase.")
 
 def parse_code_context(root):
@@ -29,9 +50,8 @@ def parse_code_context(root):
         lines_data = []
         if code_elem is not None:
             for line_elem in code_elem.findall("./line"):
-                number = line_elem.get("number", "0")
                 text = line_elem.text if line_elem.text else ""
-                lines_data.append({"number": number, "text": text})
+                lines_data.append({"text": text})
         files_data.append({"path": path, "language": language, "lines": lines_data})
     return files_data
 
@@ -72,18 +92,21 @@ def main():
     project_data = load_project_data()
     final_request = load_final_request()
 
-    # Charger contextes générés
+    # Load generated contexts
     code_files = []
     if os.path.exists("output/code_context.xml"):
         root_cc = ET.parse("output/code_context.xml").getroot()
         code_files = parse_code_context(root_cc)
 
     code_structure = ""
-    if os.path.exists("output/code_structure.xml"):
+    if os.path.exists("output/code_structure.txt"):
+        with open("output/code_structure.txt", "r", encoding="utf-8") as f:
+            code_structure = f.read().strip()
+    elif os.path.exists("output/code_structure.xml"):
         with open("output/code_structure.xml", "r", encoding="utf-8") as f:
             code_structure = f.read().strip()
 
-    # Extraire les données du projet
+    # Extract project data
     pn = project_data.get("project_name", "")
     objs = project_data.get("objectives", [])
     cc = project_data.get("code_conventions", {})
@@ -103,7 +126,7 @@ def main():
     directories_frontend = dirs_stack.get("frontend", "")
     directories_backend = dirs_stack.get("backend", "")
 
-    # Construire files_info à partir de codebase_context
+    # Build files_info from codebase_context
     files_root = ET.Element("files")
     for cf in codebase_context:
         file_elem = ET.SubElement(files_root, "file")
@@ -113,11 +136,11 @@ def main():
         d.text = cf.get("description", "")
     files_info = files_root.findall("./file")
 
-    # Charger le format depuis un .txt
+    # Load format from .txt file
     format_instructions, format_examples = load_format_data(chosen_format)
 
     env = Environment(loader=FileSystemLoader("templates"))
-    template = env.get_template("prompt_template.xml.jinja2")
+    template = env.get_template("prompt_template.txt.jinja2")
 
     prompt = template.render(
         project_name=pn,

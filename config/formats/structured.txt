@@ -1,0 +1,25 @@
+[INSTRUCTIONS]
+Structure your response with clear section headers using === separators.
+Use markdown-style formatting for code and lists.
+Keep sections organized and clearly separated.
+
+[EXAMPLES]
+====================================
+SECTION TITLE
+====================================
+Description of the section
+
+Key Points:
+- Point 1
+- Point 2
+
+Code example:
+```javascript
+function example() {
+  // code here
+}
+```
+
+Sub-Section:
+-----------
+Additional details here
