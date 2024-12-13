@@ -71,14 +71,6 @@ PROJECT STRUCTURE
 {% endif %}
 {% endwith %}
 
-====================================
-CODEBASE CONTEXT
-====================================
-{% for f in files_info %}
-File: {{ f.find('path').text.strip() }}
-Description: {{ f.find('description').text.strip() }}
-
-{% endfor %}
 
 ====================================
 CODE CONTENT
@@ -87,12 +79,15 @@ CODE CONTENT
 File: {{ file_item.path }}
 Language: {{ file_item.language }}
 
-```{{ file_item.language }}
-{% for line in file_item.lines %}
+```
+{%- for line in file_item.lines %}
 {{ line.text }}
-{% endfor %}
+{%- endfor %}
 ```
 
+{% if not loop.last %}
+---------------------------------------------------------------------------
+{% endif %}
 {% endfor %}
 
 ====================================
