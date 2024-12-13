@@ -2,4 +2,56 @@
 No specific formatting.
 
 [EXAMPLES]
-Just plain text without special formatting.
+User Profile Feature Implementation
+
+I have implemented a new user profile system that includes avatar support and form validation. Here are the main changes:
+
+In the UserProfile component (src/components/UserProfile.js), I added state management for name, email, and avatar fields, along with form validation:
+
+class UserProfile extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: props.name || '',
+      email: props.email || '',
+      avatar: props.avatar || 'default.png'
+    };
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    if (this.validateForm()) {
+      this.props.onUpdate(this.state);
+    }
+  }
+}
+
+For the styling (src/styles/profile.css), I updated the profile container and avatar styles:
+
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.avatar {
+  width: 150px;
+  height: auto;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+I also enhanced the validation utilities (src/utils/validation.js) with email and required field validation:
+
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const validateRequired = (value) => {
+  return value !== null && value !== undefined && value.trim() !== '';
+};
+
+The test coverage is good: UserProfile at 85% and validation utilities at 100%. I added @testing-library/react and validator packages, and removed the old-validation-lib.
+
+Remember to run npm install after pulling these changes. Let me know if you need any clarification or have questions.

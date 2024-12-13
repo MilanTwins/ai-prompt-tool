@@ -7,9 +7,52 @@ The diff block must be a standard unified diff patch.
 
 [EXAMPLES]
 <<<diff
---- a/path/to/original/file.js
-+++ b/path/to/original/file.js
-@@ -10,7 +10,7 @@
--original line
-+modified line
+--- a/src/components/UserProfile.js
++++ b/src/components/UserProfile.js
+@@ -15,12 +15,18 @@ class UserProfile extends Component {
+   constructor(props) {
+     super(props);
+     this.state = {
+-      name: '',
+-      email: ''
++      name: props.name || '',
++      email: props.email || '',
++      avatar: props.avatar || 'default.png'
+     };
+   }
+ 
+-  handleSubmit() {
++  componentDidMount() {
++    this.loadUserData();
++  }
++
++  handleSubmit(event) {
++    event.preventDefault();
+     this.props.onUpdate(this.state);
+   }
+ }
+--- a/src/styles/profile.css
++++ b/src/styles/profile.css
+@@ -1,5 +1,10 @@
++.profile-container {
++  max-width: 800px;
++  margin: 0 auto;
++}
++
+ .avatar {
+-  width: 100px;
++  width: 150px;
+   height: auto;
+   border-radius: 50%;
+ }
+--- a/src/utils/validation.js
++++ b/src/utils/validation.js
+@@ -8,6 +8,7 @@ function validateEmail(email) {
+   return emailRegex.test(email);
+ }
+ 
+-module.exports = validateEmail;
++module.exports = {
++  validateEmail
++};
 >>>

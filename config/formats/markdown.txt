@@ -3,7 +3,88 @@ Use Markdown syntax.
 Include code blocks with ```language for code samples.
 
 [EXAMPLES]
-**Example (Markdown)**
-```markdown
-# Title
-- Bullet point
+# User Profile Feature Implementation
+
+## Overview
+Implementation of a new user profile system with avatar support and form validation.
+
+### Key Changes
+- Added new UserProfile component
+- Enhanced form validation
+- Updated styling for profile page
+
+## Component Implementation
+
+### UserProfile Component
+New React component for managing user profiles:
+
+```javascript
+class UserProfile extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: props.name || '',
+      email: props.email || '',
+      avatar: props.avatar || 'default.png'
+    };
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    if (this.validateForm()) {
+      this.props.onUpdate(this.state);
+    }
+  }
+}
+```
+
+### Styling Updates
+Enhanced profile page styling:
+
+```css
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.avatar {
+  width: 150px;
+  height: auto;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+```
+
+## Utility Functions
+
+### Form Validation
+Enhanced validation utilities:
+
+```javascript
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const validateRequired = (value) => {
+  return value !== null && value !== undefined && value.trim() !== '';
+};
+
+export { validateEmail, validateRequired };
+```
+
+## Testing
+| Component | Coverage |
+|-----------|----------|
+| UserProfile | 85% |
+| Validation | 100% |
+
+## Dependencies
+* Added:
+  * @testing-library/react
+  * validator
+* Removed:
+  * old-validation-lib
+
+> **Note:** Remember to run `npm install` after pulling these changes.

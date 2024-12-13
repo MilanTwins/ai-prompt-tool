@@ -3,9 +3,98 @@ Use XML tags to structure your response.
 Use <code> elements for code samples.
 
 [EXAMPLES]
-<example>
-  <title>Title</title>
-  <list>
-    <item>Bullet point</item>
-  </list>
-</example>
+<response>
+  <summary>
+    <title>User Profile Feature Implementation</title>
+    <description>Implementation of user profile system with avatar support and form validation</description>
+    <status>Completed</status>
+  </summary>
+
+  <changes>
+    <component name="UserProfile">
+      <path>src/components/UserProfile.js</path>
+      <type>New Component</type>
+      <description>React component for managing user profiles</description>
+      <code language="javascript">
+        <![CDATA[
+class UserProfile extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: props.name || '',
+      email: props.email || '',
+      avatar: props.avatar || 'default.png'
+    };
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    if (this.validateForm()) {
+      this.props.onUpdate(this.state);
+    }
+  }
+}
+        ]]>
+      </code>
+    </component>
+
+    <styles>
+      <path>src/styles/profile.css</path>
+      <type>Modified</type>
+      <description>Enhanced profile page styling</description>
+      <code language="css">
+        <![CDATA[
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.avatar {
+  width: 150px;
+  height: auto;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+        ]]>
+      </code>
+    </styles>
+
+    <utility>
+      <path>src/utils/validation.js</path>
+      <type>Modified</type>
+      <description>Enhanced validation utilities</description>
+      <code language="javascript">
+        <![CDATA[
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const validateRequired = (value) => {
+  return value !== null && value !== undefined && value.trim() !== '';
+};
+
+export { validateEmail, validateRequired };
+        ]]>
+      </code>
+    </utility>
+  </changes>
+
+  <testing>
+    <coverage>
+      <component name="UserProfile">85%</component>
+      <component name="Validation">100%</component>
+    </coverage>
+  </testing>
+
+  <dependencies>
+    <added>
+      <package>@testing-library/react</package>
+      <package>validator</package>
+    </added>
+    <removed>
+      <package>old-validation-lib</package>
+    </removed>
+  </dependencies>
+</response>

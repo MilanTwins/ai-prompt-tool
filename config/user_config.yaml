@@ -26,16 +26,6 @@ exclude_patterns:
 selected_project_data: project_data.yaml
 selected_user_config: user_config.yaml
 selected_files:
-  - config/final_request.yaml
-  - config/formats
-  - config/formats/automatic_xml.txt
-  - config/formats/diff.txt
-  - config/formats/gpt.txt
-  - config/formats/json.txt
-  - config/formats/markdown.txt
-  - config/formats/none.txt
-  - config/formats/structured.txt
-  - config/formats/xml.txt
-  - config/templates
-  - config/templates/example_user_config.yaml
-  - config/user_config.yaml
+  - scripts/apply_diff.py
+  - scripts/generate_prompt.py
+  - scripts/generate_structure.py

@@ -4,6 +4,48 @@ Present keys and values in a JSON structure.
 
 [EXAMPLES]
 {
-"title": "Title",
-"items": ["Bullet point"]
+  "taskSummary": "Implement user profile feature with form validation",
+  "changes": {
+    "components": {
+      "UserProfile": {
+        "path": "src/components/UserProfile.js",
+        "type": "new",
+        "description": "React component for user profile management",
+        "code": {
+          "language": "javascript",
+          "content": "class UserProfile extends Component {\n  constructor(props) {\n    super(props);\n    this.state = {\n      name: props.name || '',\n      email: props.email || '',\n      avatar: props.avatar || 'default.png'\n    };\n  }\n\n  handleSubmit(event) {\n    event.preventDefault();\n    if (this.validateForm()) {\n      this.props.onUpdate(this.state);\n    }\n  }\n}"
+        }
+      }
+    },
+    "styles": {
+      "profile": {
+        "path": "src/styles/profile.css",
+        "type": "modified",
+        "description": "Updated styles for profile layout",
+        "code": {
+          "language": "css",
+          "content": ".profile-container {\n  max-width: 800px;\n  margin: 0 auto;\n}\n\n.avatar {\n  width: 150px;\n  height: auto;\n  border-radius: 50%;\n}"
+        }
+      }
+    },
+    "utilities": {
+      "validation": {
+        "path": "src/utils/validation.js",
+        "type": "modified",
+        "description": "Enhanced validation utilities",
+        "code": {
+          "language": "javascript",
+          "content": "const validateEmail = (email) => {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return emailRegex.test(email);\n};\n\nexport { validateEmail };"
+        }
+      }
+    }
+  },
+  "testCoverage": {
+    "components": "85%",
+    "utilities": "100%"
+  },
+  "dependencies": {
+    "added": ["@testing-library/react", "validator"],
+    "removed": ["old-validation-lib"]
+  }
 }
