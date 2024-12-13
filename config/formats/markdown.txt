@@ -1,0 +1,9 @@
+[INSTRUCTIONS]
+Use Markdown syntax.
+Include code blocks with ```language for code samples.
+
+[EXAMPLES]
+**Example (Markdown)**
+```markdown
+# Title
+- Bullet point

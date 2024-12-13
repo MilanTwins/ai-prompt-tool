@@ -1,0 +1,11 @@
+[INSTRUCTIONS]
+Use XML tags to structure your response.
+Use <code> elements for code samples.
+
+[EXAMPLES]
+<example>
+  <title>Title</title>
+  <list>
+    <item>Bullet point</item>
+  </list>
+</example>

@@ -4,21 +4,18 @@ import re
 import os
 import subprocess
 import tempfile
+import yaml
 
 def extract_diff_from_text(text):
     """
     Extracts the unified diff code block from the AI response.
-    We now look for a code block starting with <<<diff on a line
-    and ending with >>> on a line.
+    We look for a code block starting with <<<diff on a line
+    and ending with >>> on a line, with no additional text outside.
 
-    The pattern:
-    <<<diff
-    ... diff lines ...
-    >>>
+    Updated the regex to handle different newline conventions.
     """
-
-    pattern = r'^<<<diff\s*\n(.*?)\n>>>$'
-    match = re.search(pattern, text, flags=re.DOTALL | re.MULTILINE)
+    pattern = r'^<<<diff\r?\n(.*?)\r?\n>>>$'
+    match = re.search(pattern, text, flags=re.DOTALL)
     if match:
         return match.group(1).strip()
     return None
@@ -26,16 +23,13 @@ def extract_diff_from_text(text):
 def parse_diff(diff_content):
     """
     Parse the diff content and produce a summary of changes.
-    We'll identify each file modified and count additions/removals.
     """
-
     lines = diff_content.split('\n')
     file_changes = []
     current_file = None
     additions = 0
     deletions = 0
 
-    # Regex to identify the start of a diff for a file
     file_start_regex = re.compile(r'^--- a/(.*)$')
     file_end_regex = re.compile(r'^\+\+\+ b/(.*)$')
     hunk_regex = re.compile(r'^@@ ')
@@ -44,34 +38,23 @@ def parse_diff(diff_content):
         f_start = file_start_regex.match(line)
         f_end = file_end_regex.match(line)
         if f_start:
-            # If we were tracking a previous file, store its data first
             if current_file:
-                # Store previous file's changes
                 file_changes.append((current_file, additions, deletions))
             current_file = None
             additions = 0
             deletions = 0
-            # Just note the file, we will confirm after +++ line
         elif f_end:
             if f_end and current_file is None:
                 current_file = f_end.group(1)
-
         elif current_file:
-            # Inside a file diff hunks
             if hunk_regex.match(line):
-                # A new hunk starts here, continue
                 continue
             else:
-                # Count line additions/deletions
-                # Lines starting with '+' are additions
-                # Lines starting with '-' are deletions
-                # Lines starting with ' ' are context
                 if line.startswith('+') and not line.startswith('+++'):
                     additions += 1
                 elif line.startswith('-') and not line.startswith('---'):
                     deletions += 1
 
-    # After the loop ends, if we have a current_file, store its data
     if current_file:
         file_changes.append((current_file, additions, deletions))
 
@@ -88,7 +71,6 @@ def main():
         print(f"Error: File '{response_file}' not found.")
         sys.exit(1)
 
-    # Read the AI response
     with open(response_file, 'r', encoding='utf-8') as f:
         content = f.read()
 
@@ -98,14 +80,36 @@ def main():
         print("The response must contain a diff block starting with <<<diff and ending with >>>")
         sys.exit(1)
 
-    # Write diff to a temporary file
+    # Load user_config to determine source_directory
+    user_config_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'user_config.yaml')
+    try:
+        with open(user_config_path, 'r', encoding='utf-8') as uf:
+            user_config = yaml.safe_load(uf) or {}
+    except Exception as e:
+        print(f"Error loading user_config.yaml: {e}")
+        sys.exit(1)
+
+    source_directory = user_config.get("source_directory", ".")
+    if not os.path.isdir(source_directory):
+        print(f"Error: The source_directory '{source_directory}' does not exist or is not a directory.")
+        sys.exit(1)
+
+    # Print the directory where we will apply the diff
+    print(f"Applying diff in directory: {source_directory}")
+
     with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.patch') as tmpfile:
         patch_path = tmpfile.name
         tmpfile.write(diff_content)
 
-    # Apply the patch
     try:
-        result = subprocess.run(["patch", "-p1", "-i", patch_path], check=False, capture_output=True, text=True)
+        # Run patch in the source_directory defined by user_config
+        result = subprocess.run(
+            ["patch", "-p1", "-i", patch_path],
+            check=False,
+            capture_output=True,
+            text=True,
+            cwd=source_directory
+        )
         if result.returncode != 0:
             print("Failed to apply patch. Details:")
             print("\nPatch command output:")
@@ -121,15 +125,12 @@ def main():
         else:
             print("Patch applied successfully.\n")
 
-            # Parse and print detailed info about changes
             file_changes = parse_diff(diff_content)
             print("Summary of changes:")
             for fname, add, remove in file_changes:
                 print(f"- {fname}: +{add} lines, -{remove} lines")
-            
             print("\nNote: Please verify the changes in your files to ensure they were applied correctly.")
     finally:
-        # Remove the temporary patch file
         os.remove(patch_path)
 
 if __name__ == "__main__":

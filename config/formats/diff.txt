@@ -1,0 +1,15 @@
+[INSTRUCTIONS]
+Provide all code modifications in unified diff (patch) format.
+Include all modifications for all files in a single diff block.
+Instead of using backticks, use '<<<diff' to start and '>>>' to end the diff block.
+No explanations, comments, or extra text outside the diff block.
+The diff block must be a standard unified diff patch.
+
+[EXAMPLES]
+<<<diff
+--- a/path/to/original/file.js
++++ b/path/to/original/file.js
+@@ -10,7 +10,7 @@
+-original line
++modified line
+>>>

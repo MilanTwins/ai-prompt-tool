@@ -1,0 +1,9 @@
+[INSTRUCTIONS]
+Use JSON formatting.
+Present keys and values in a JSON structure.
+
+[EXAMPLES]
+{
+"title": "Title",
+"items": ["Bullet point"]
+}

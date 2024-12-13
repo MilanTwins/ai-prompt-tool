@@ -1,0 +1,9 @@
+[INSTRUCTIONS]
+The response must strictly follow the arrow-based bullet format.
+No additional text, explanations, or formatting beyond what is shown in sample.
+All modifications and code presented exactly as requested.
+
+[EXAMPLES]
+-> Regarding the final request...
+-> Short comment on the change made to file1
+-> COMPLETE CODE OF FILE1

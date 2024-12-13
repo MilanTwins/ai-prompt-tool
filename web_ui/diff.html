@@ -19,7 +19,8 @@
             <div id="selectedDirInfo"></div>
 
             <h2>AI Response</h2>
-            <textarea id="aiResponse" rows="10" placeholder="Paste the AI response containing modifications (diff) here..."></textarea>
+            <p style="color:#333;font-size:14px;">Please paste the AI response containing ONLY the diff block (from "<<<diff" up to ">>>"), with no additional text before or after.</p>
+            <textarea id="aiResponse" rows="10" placeholder="Paste the AI diff response here..."></textarea>
             
             <button id="applyChangesBtn">Apply Changes</button>
         </div>
@@ -30,7 +31,6 @@
         </div>
     </div>
 
-    <!-- Directory explorer modal -->
     <div id="dirModal" class="modal">
         <div class="modal-content">
             <h2>Browse Directories</h2>
@@ -49,7 +49,6 @@
         import { errorUtils, loadingUtils } from './utils/common.js';
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Initialize components
             const navigation = new Navigation(document.getElementById('mainNav'));
             const directoryModal = new DirectoryModal();
 
@@ -60,18 +59,14 @@
             const chooseDirBtn = document.getElementById('chooseDirBtn');
             const selectedDirInfo = document.getElementById('selectedDirInfo');
 
-            // Directory input validation
             let validationTimeout;
             sourceDirInput.addEventListener('input', async (e) => {
                 clearTimeout(validationTimeout);
                 const path = e.target.value.trim();
-                
                 validationTimeout = setTimeout(async () => {
                     if (!path) return;
-                    
                     try {
                         await ApiService.listDir(path);
-                        // Path exists, update the system
                         await ApiService.updateSource(path);
                         selectedDirInfo.textContent = `Selected directory: ${path}`;
                         selectedDirInfo.style.color = '#4CAF50';
@@ -82,13 +77,11 @@
                 }, 500);
             });
 
-            // Directory selection via modal
             chooseDirBtn.addEventListener('click', () => {
                 directoryModal.show(async (selectedDir) => {
                     sourceDirInput.value = selectedDir;
                     selectedDirInfo.textContent = `Selected directory: ${selectedDir}`;
                     selectedDirInfo.style.color = '#4CAF50';
-                    
                     try {
                         await ApiService.updateSource(selectedDir);
                     } catch (error) {
@@ -97,7 +90,6 @@
                 });
             });
 
-            // Apply changes
             applyChangesBtn.addEventListener('click', async () => {
                 const sourceDir = sourceDirInput.value.trim();
                 const aiResponseText = aiResponse.value.trim();
@@ -108,7 +100,7 @@
                 }
 
                 if (!aiResponseText) {
-                    alert("Please paste the AI response containing the modifications to apply.");
+                    alert("Please paste the AI response containing the modifications.");
                     return;
                 }
 
@@ -116,15 +108,13 @@
                     loadingUtils.showLoading(applyChangesBtn);
 
                     await ApiService.updateSource(sourceDir);
-                    
                     const result = await ApiService.applyDiff(aiResponseText);
-                    
-                    // Display result
+
                     let output = "Changes applied successfully!\n\nSummary of changes:\n";
                     result.changes.forEach(change => {
                         output += `- ${change.file}: +${change.additions} lines, -${change.deletions} lines\n`;
                     });
-                    
+
                     diffOutput.textContent = output;
                 } catch (error) {
                     errorUtils.handleError(error, 'applying changes');
@@ -140,12 +130,10 @@
                 }
             });
 
-            // Initialize current directory from user_config.yaml
             try {
                 const userConfigContent = await ApiService.getConfigContent('user_config.yaml');
                 const configData = jsyaml.load(userConfigContent);
                 const sourceDirectory = configData.source_directory || '/';
-                
                 sourceDirInput.value = sourceDirectory;
                 selectedDirInfo.textContent = `Selected directory: ${sourceDirectory}`;
                 selectedDirInfo.style.color = '#4CAF50';

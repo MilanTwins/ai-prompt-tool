@@ -37,7 +37,7 @@ app.post('/api/getFileStructure', (req, res) => {
       for (const item of items) {
         const fullPath = path.join(dir, item.name);
         const itemRelativePath = path.join(relativePath, item.name);
-        
+
         if (isExcluded(itemRelativePath)) continue;
 
         if (item.isDirectory()) {
@@ -78,10 +78,9 @@ app.post('/api/getFileStructure', (req, res) => {
 app.post('/api/saveSelectedFiles', (req, res) => {
   const { selectedFiles } = req.body;
   const userConfigPath = path.join(__dirname, 'config', 'user_config.yaml');
-  
+
   try {
     let config = yaml.load(fs.readFileSync(userConfigPath, 'utf-8')) || {};
-    // Ensure selectedFiles is always an array, even if empty
     config.selected_files = Array.isArray(selectedFiles) ? selectedFiles : [];
     fs.writeFileSync(userConfigPath, yaml.dump(config), 'utf-8');
     res.json({ success: true });
@@ -94,7 +93,7 @@ app.post('/api/saveSelectedFiles', (req, res) => {
 // Get selected files
 app.get('/api/getSelectedFiles', (req, res) => {
   const userConfigPath = path.join(__dirname, 'config', 'user_config.yaml');
-  
+
   try {
     const config = yaml.load(fs.readFileSync(userConfigPath, 'utf-8')) || {};
     res.json(config.selected_files || []);
@@ -104,7 +103,7 @@ app.get('/api/getSelectedFiles', (req, res) => {
   }
 });
 
-// Liste des formats disponibles
+// Liste des formats disponibles (maintenant en .txt)
 app.get('/api/formats', (req, res) => {
   const formatsDir = path.join(__dirname, 'config', 'formats');
   fs.readdir(formatsDir, (err, files) => {
@@ -113,8 +112,8 @@ app.get('/api/formats', (req, res) => {
       return res.status(500).json({ error: 'Cannot read formats directory' });
     }
     const formats = files
-      .filter(f => f.endsWith('.xml'))
-      .map(f => f.replace('.xml', ''));
+      .filter(f => f.endsWith('.txt'))
+      .map(f => f.replace('.txt', ''));
     res.json(formats);
   });
 });
@@ -132,12 +131,11 @@ app.post('/api/updateSource', (req, res) => {
   try {
     let yamlContent = fs.readFileSync(userConfigPath, 'utf-8');
     let doc = yaml.load(yamlContent) || {};
-    
-    // Only clear selected files if the source directory has changed
+
     if (doc.source_directory !== source_directory) {
       doc.selected_files = []; // Clear selected files when changing directory
     }
-    
+
     doc.source_directory = source_directory;
     const newYaml = yaml.dump(doc);
     fs.writeFileSync(userConfigPath, newYaml, 'utf-8');
@@ -372,7 +370,7 @@ app.post('/api/updateSelectedConfigs', (req, res) => {
   }
 });
 
-const PORT = 3000;
+const PORT = 3010;
 app.listen(PORT, () => {
   console.log(`Server started on http://localhost:${PORT}`);
 });

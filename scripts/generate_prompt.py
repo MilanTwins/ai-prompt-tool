@@ -31,13 +31,36 @@ def parse_code_context(root):
             for line_elem in code_elem.findall("./line"):
                 number = line_elem.get("number", "0")
                 text = line_elem.text if line_elem.text else ""
-                lines_data.append({'number': number, 'text': text})
-        files_data.append({
-            'path': path,
-            'language': language,
-            'lines': lines_data
-        })
+                lines_data.append({"number": number, "text": text})
+        files_data.append({"path": path, "language": language, "lines": lines_data})
     return files_data
+
+def load_format_data(format_name):
+    format_file = f"config/formats/{format_name}.txt"
+    if not os.path.exists(format_file):
+        print("Format file not found.")
+        sys.exit(1)
+
+    instructions = []
+    examples = []
+    current_section = None
+
+    with open(format_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.rstrip('\n')
+            if line == '[INSTRUCTIONS]':
+                current_section = 'instructions'
+                continue
+            elif line == '[EXAMPLES]':
+                current_section = 'examples'
+                continue
+
+            if current_section == 'instructions' and line.strip():
+                instructions.append(line.strip())
+            elif current_section == 'examples' and line.strip():
+                examples.append(line.strip())
+
+    return instructions, examples
 
 def main():
     if len(sys.argv) < 2:
@@ -90,17 +113,8 @@ def main():
         d.text = cf.get("description", "")
     files_info = files_root.findall("./file")
 
-    format_file = f"config/formats/{chosen_format}.xml"
-    if not os.path.exists(format_file):
-        print("Format file not found.")
-        sys.exit(1)
-    format_root = ET.parse(format_file).getroot()
-
-    def get_list(root, xpath):
-        return [e.text.strip() for e in root.findall(xpath)]
-
-    format_instructions = get_list(format_root, "./instructions/instruction")
-    format_examples = get_list(format_root, "./examples/example")
+    # Charger le format depuis un .txt
+    format_instructions, format_examples = load_format_data(chosen_format)
 
     env = Environment(loader=FileSystemLoader("templates"))
     template = env.get_template("prompt_template.xml.jinja2")
@@ -124,7 +138,7 @@ def main():
         request=final_request,
         chosen_format=chosen_format,
         format_instructions=format_instructions,
-        format_examples=format_examples
+        format_examples=format_examples,
     )
 
     print(prompt)

@@ -30,12 +30,13 @@ selected_files:
   - config
   - config/final_request.yaml
   - config/formats
-  - config/formats/diff.xml
-  - config/formats/gpt.xml
-  - config/formats/json.xml
-  - config/formats/markdown.xml
-  - config/formats/none.xml
-  - config/formats/xml.xml
+  - config/formats/automatic_xml.txt
+  - config/formats/diff.txt
+  - config/formats/gpt.txt
+  - config/formats/json.txt
+  - config/formats/markdown.txt
+  - config/formats/none.txt
+  - config/formats/xml.txt
   - config/templates
   - config/templates/example_user_config.yaml
   - config/user_config.yaml
