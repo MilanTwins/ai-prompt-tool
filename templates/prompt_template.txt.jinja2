@@ -22,48 +22,39 @@ PROJECT INFORMATION
 ====================================
 Project Name: {{ project_name }}
 
-Objectives:
-{% for obj in objectives %}
-- {{ obj }}
-{% endfor %}
-
-Code Conventions:
+{% for key, value in project_data.items() if key != "project_name" %}
+{{ key | replace('_', ' ') | title }}:
+{% if value is mapping %}
+{% if key == "code_conventions" %}
 ---------------
-Frontend Stack: {{ frontend_stack }}
-Backend Stack: {{ backend_stack }}
+{% if value.language_stack %}
+Frontend Stack: {{ value.language_stack.frontend }}
+Backend Stack: {{ value.language_stack.backend }}
+{% endif %}
 
+{% if value.directories_structure %}
 Directory Structure:
-- Frontend: {{ directories_frontend }}
-- Backend: {{ directories_backend }}
+- Frontend: {{ value.directories_structure.frontend }}
+- Backend: {{ value.directories_structure.backend }}
+{% endif %}
 
+{% if value.coding_style %}
 Coding Style:
-{% for rule in coding_style %}
+{% for rule in value.coding_style %}
 - {{ rule }}
 {% endfor %}
-
-Privacy and Legal:
-{% for pl in privacy_and_legal %}
-- {{ pl }}
+{% endif %}
+{% else %}
+{% for subkey, subvalue in value.items() %}
+{{ subkey | replace('_', ' ') | title }}: {{ subvalue }}
 {% endfor %}
-
-Performance and Architecture:
-{% for pa in performance_and_arch %}
-- {{ pa }}
+{% endif %}
+{% else %}
+{% for item in value %}
+- {{ item }}
 {% endfor %}
+{% endif %}
 
-UX Guidelines:
-{% for ux in ux_guidelines %}
-- {{ ux }}
-{% endfor %}
-
-Advertising:
-{% for ad in advertising %}
-- {{ ad }}
-{% endfor %}
-
-Evolutivity:
-{% for ev in evolutivity %}
-- {{ ev }}
 {% endfor %}
 
 ====================================

@@ -23,7 +23,7 @@ exclude_patterns:
   - '*.tmp'
   - '*.bak'
   - '*.swp'
-selected_project_data: user_config.yaml
+selected_project_data: project_data.yaml
 selected_user_config: user_config.yaml
 selected_files:
   - README.md
@@ -52,7 +52,6 @@ selected_files:
   - server.js
   - templates
   - templates/prompt_template.txt.jinja2
-  - templates/prompt_template.xml.jinja2
   - web_ui
   - web_ui/components
   - web_ui/components/DirectoryModal.js

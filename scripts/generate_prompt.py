@@ -13,28 +13,12 @@ def load_project_data():
     user_conf = load_user_config()
     project_data_file = user_conf.get("selected_project_data", "project_data.yaml")
     
-    # Si le fichier sélectionné n'existe pas, utiliser project_data.yaml
-    if not os.path.exists(f"config/{project_data_file}"):
-        print(f"Warning: Selected project data file 'config/{project_data_file}' not found, using project_data.yaml")
-        project_data_file = "project_data.yaml"
-    
     try:
         with open(f"config/{project_data_file}", "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
-            # Si le fichier est vide ou ne contient pas les données attendues, utiliser project_data.yaml
-            if not data or "project_name" not in data:
-                print(f"Warning: '{project_data_file}' does not contain valid project data, using project_data.yaml")
-                with open("config/project_data.yaml", "r", encoding="utf-8") as f2:
-                    return yaml.safe_load(f2) or {}
-            return data
-    except Exception as e:
-        print(f"Error loading project data: {e}, using project_data.yaml")
-        try:
-            with open("config/project_data.yaml", "r", encoding="utf-8") as f:
-                return yaml.safe_load(f) or {}
-        except Exception as e2:
-            print(f"Error loading project_data.yaml: {e2}")
-            return {}
+            return data if data else {}
+    except Exception:
+        return {}
 
 def load_final_request():
     with open("config/final_request.yaml", "r", encoding="utf-8") as f:
@@ -106,34 +90,15 @@ def main():
         with open("output/code_structure.xml", "r", encoding="utf-8") as f:
             code_structure = f.read().strip()
 
-    # Extract project data
-    pn = project_data.get("project_name", "")
-    objs = project_data.get("objectives", [])
-    cc = project_data.get("code_conventions", {})
-    pl = project_data.get("privacy_and_legal", [])
-    pa = project_data.get("performance_and_architecture", [])
-    ux = project_data.get("ux_guidelines", [])
-    ad = project_data.get("advertising", [])
-    ev = project_data.get("evolutivity", [])
-    codebase_context = project_data.get("codebase_context", [])
-
-    lang_stack = cc.get("language_stack", {})
-    dirs_stack = cc.get("directories_structure", {})
-    coding_style = cc.get("coding_style", [])
-
-    frontend_stack = lang_stack.get("frontend", "")
-    backend_stack = lang_stack.get("backend", "")
-    directories_frontend = dirs_stack.get("frontend", "")
-    directories_backend = dirs_stack.get("backend", "")
-
-    # Build files_info from codebase_context
+    # Build files_info from codebase_context if it exists
     files_root = ET.Element("files")
-    for cf in codebase_context:
-        file_elem = ET.SubElement(files_root, "file")
-        p = ET.SubElement(file_elem, "path")
-        p.text = cf.get("path", "")
-        d = ET.SubElement(file_elem, "description")
-        d.text = cf.get("description", "")
+    if "codebase_context" in project_data:
+        for cf in project_data["codebase_context"]:
+            file_elem = ET.SubElement(files_root, "file")
+            p = ET.SubElement(file_elem, "path")
+            p.text = cf.get("path", "")
+            d = ET.SubElement(file_elem, "description")
+            d.text = cf.get("description", "")
     files_info = files_root.findall("./file")
 
     # Load format from .txt file
@@ -142,28 +107,20 @@ def main():
     env = Environment(loader=FileSystemLoader("templates"))
     template = env.get_template("prompt_template.txt.jinja2")
 
-    prompt = template.render(
-        project_name=pn,
-        objectives=objs,
-        frontend_stack=frontend_stack,
-        backend_stack=backend_stack,
-        directories_frontend=directories_frontend,
-        directories_backend=directories_backend,
-        coding_style=coding_style,
-        privacy_and_legal=pl,
-        performance_and_arch=pa,
-        ux_guidelines=ux,
-        advertising=ad,
-        evolutivity=ev,
-        code_structure=code_structure,
-        files_info=files_info,
-        code_files=code_files,
-        request=final_request,
-        chosen_format=chosen_format,
-        format_instructions=format_instructions,
-        format_examples=format_examples,
-    )
+    # Prepare template context
+    template_context = {
+        "project_name": project_data.get("project_name", ""),
+        "project_data": project_data,  # Pass the entire project_data for dynamic rendering
+        "code_structure": code_structure,
+        "files_info": files_info,
+        "code_files": code_files,
+        "request": final_request,
+        "chosen_format": chosen_format,
+        "format_instructions": format_instructions,
+        "format_examples": format_examples
+    }
 
+    prompt = template.render(**template_context)
     print(prompt)
 
 if __name__ == "__main__":
