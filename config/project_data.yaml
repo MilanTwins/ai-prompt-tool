@@ -1,9 +1,9 @@
 project_name: "AI Prompt Tool"
 
 objectives:
-  - "Offrir une interface simple pour configurer le répertoire source, le format de sortie et la requête finale."
-  - "Analyser automatiquement la structure du code et générer un prompt complet, intégrant contexte, objectifs et directives."
-  - "Faciliter l’ajout de nouveaux formats de prompt, de nouvelles configurations, et permettre une évolution future du projet."
+  - "Provide a simple interface to configure source directory, output format, and final request."
+  - "Automatically analyze code structure and generate a complete prompt, integrating context, objectives, and guidelines."
+  - "Facilitate the addition of new prompt formats, new configurations, and enable future project evolution."
 
 code_conventions:
   language_stack:
@@ -13,31 +13,31 @@ code_conventions:
     frontend: "web_ui (index.html, main.js, configuration.js, styles.css)"
     backend: "config, scripts, server.js"
   coding_style:
-    - "Utiliser ES6+ (const, let, fonctions fléchées) pour le code JS."
-    - "Commenter clairement les parties critiques."
-    - "Séparer le code de configuration (config/) des scripts d'analyse (scripts/) et de l'interface (web_ui/)."
-    - "Respecter une indentation cohérente, un style clair et lisible."
+    - "Use ES6+ (const, let, arrow functions) for JS code."
+    - "Clearly comment critical sections."
+    - "Separate configuration code (config/) from analysis scripts (scripts/) and interface (web_ui/)."
+    - "Maintain consistent indentation, clear and readable style."
 
 privacy_and_legal:
-  - "Ne pas récupérer de données personnelles sensibles dans le code."
-  - "Les fichiers de configuration doivent rester internes (aucune fuite vers l’extérieur)."
-  - "Respecter les droits d’auteur pour toute dépendance tierce."
+  - "Do not collect sensitive personal data in the code."
+  - "Configuration files must remain internal (no external leaks)."
+  - "Respect third-party dependency copyrights."
 
 performance_and_architecture:
-  - "L’analyse du code doit être rapide (quelques secondes), sans blocage."
-  - "La génération du prompt final ne doit pas dépasser quelques secondes."
-  - "Conserver une architecture modulaire permettant de facilement remplacer ou étendre les composants."
+  - "Code analysis must be fast (few seconds), without blocking."
+  - "Final prompt generation should not exceed a few seconds."
+  - "Maintain a modular architecture allowing easy component replacement or extension."
 
 ux_guidelines:
-  - "Interface web fullscreen, sans scroll global (overflow dans des zones dédiées)."
-  - "Navigation fluide : choisir répertoire, format, requête, puis générer."
-  - "Boutons et textes clairs, interface épurée."
-  - "Retour visuel (messages de succès/erreur, alertes) dès que l’utilisateur interagit."
-  - "Possibilité d’ajouter facilement de nouvelles sections ou pages si nécessaire."
+  - "Fullscreen web interface, no global scroll (overflow in dedicated areas)."
+  - "Smooth navigation: select directory, format, request, then generate."
+  - "Clear buttons and text, clean interface."
+  - "Visual feedback (success/error messages, alerts) when user interacts."
+  - "Ability to easily add new sections or pages as needed."
 
 advertising:
-  - "Pas de publicité intrusive. Si ajoutée, elle doit être discrète et non perturber l’utilisateur."
+  - "No intrusive advertising. If added, it must be discreet and not disrupt the user."
 
 evolutivity:
-  - "Pouvoir ajouter de nouveaux formats (XML, JSON, Markdown, etc.) sans refondre l’architecture."
-  - "Permettre l’ajout facile de nouvelles configurations (nouveaux fichiers YAML) et gérer leur sélection."
+  - "Ability to add new formats (XML, JSON, Markdown, etc.) without rebuilding the architecture."
+  - "Enable easy addition of new configurations (new YAML files) and manage their selection."

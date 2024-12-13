@@ -18,6 +18,28 @@ Approach:
 5. Provide clear, actionable steps
 
 ====================================
+TASK
+====================================
+{{ request }}
+
+Your response must strictly follow the format specified in the FORMAT INSTRUCTIONS section below. This format is crucial for proper processing of your response.
+
+====================================
+FORMAT INSTRUCTIONS
+====================================
+Format: {{ chosen_format }}
+
+Instructions:
+{% for instr in format_instructions %}
+- {{ instr }}
+{% endfor %}
+
+Examples:
+{% for ex in format_examples %}
+{{ ex }}
+{% endfor %}
+
+====================================
 PROJECT INFORMATION
 ====================================
 Project Name: {{ project_name }}
@@ -71,7 +93,6 @@ PROJECT STRUCTURE
 {% endif %}
 {% endwith %}
 
-
 ====================================
 CODE CONTENT
 ====================================
@@ -89,23 +110,3 @@ Language: {{ file_item.language }}
 ---------------------------------------------------------------------------
 {% endif %}
 {% endfor %}
-
-====================================
-FORMAT INSTRUCTIONS
-====================================
-Format: {{ chosen_format }}
-
-Instructions:
-{% for instr in format_instructions %}
-- {{ instr }}
-{% endfor %}
-
-Examples:
-{% for ex in format_examples %}
-{{ ex }}
-{% endfor %}
-
-====================================
-TASK
-====================================
-{{ request }}
