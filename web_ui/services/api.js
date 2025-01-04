@@ -67,12 +67,12 @@ class ApiService {
         return response.json();
     }
 
-    static async getFileStructure() {
-        const response = await fetch('/api/getFileStructure', {
+    static async getFullStructure() {
+        const response = await fetch('/api/getFullStructure', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
-        if (!response.ok) throw new Error('Failed to get file structure');
+        if (!response.ok) throw new Error('Failed to get full file structure');
         return response.json();
     }
 

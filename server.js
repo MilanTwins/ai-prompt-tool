@@ -11,8 +11,8 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'web_ui')));
 app.use(express.json()); // Add JSON body parser middleware
 
-// Get file structure for a directory
-app.post('/api/getFileStructure', (req, res) => {
+// Get complete file structure for a directory, ignoring only excluded patterns
+app.post('/api/getFullStructure', (req, res) => {
   const userConfigPath = path.join(__dirname, 'config', 'user_config.yaml');
   try {
     const userConfig = yaml.load(fs.readFileSync(userConfigPath, 'utf-8')) || {};
@@ -33,7 +33,10 @@ app.post('/api/getFileStructure', (req, res) => {
     function buildTree(dir, relativePath = '') {
       const items = fs.readdirSync(dir, { withFileTypes: true });
       const tree = [];
+      const directories = [];
+      const files = [];
 
+      // Séparer d'abord les fichiers et dossiers
       for (const item of items) {
         const fullPath = path.join(dir, item.name);
         const itemRelativePath = path.join(relativePath, item.name);
@@ -41,23 +44,30 @@ app.post('/api/getFileStructure', (req, res) => {
         if (isExcluded(itemRelativePath)) continue;
 
         if (item.isDirectory()) {
-          const children = buildTree(fullPath, itemRelativePath);
-          if (children.length > 0) {
-            tree.push({
-              name: item.name,
-              path: itemRelativePath,
-              type: 'directory',
-              children
-            });
-          }
+          directories.push({ item, fullPath, itemRelativePath });
         } else {
-          tree.push({
+          files.push({
             name: item.name,
             path: itemRelativePath,
             type: 'file'
           });
         }
       }
+
+      // Traiter les dossiers et leurs contenus
+      for (const { item, fullPath, itemRelativePath } of directories) {
+        const children = buildTree(fullPath, itemRelativePath);
+        // Ajouter le dossier même s'il est vide
+        tree.push({
+          name: item.name,
+          path: itemRelativePath,
+          type: 'directory',
+          children: children
+        });
+      }
+
+      // Ajouter les fichiers au même niveau
+      tree.push(...files);
 
       return tree;
     }

@@ -1,1 +1,22 @@
-final_request: ''
+final_request: >
+  -> quand je traque le dossier /home/ilan/code/try-on/ 
+
+  L'ui affiches bien les dossier dedans mais n'affiche pas le dossier et ce que
+  contient : 
+
+  /home/ilan/code/try-on/backend/src/routes/
+
+
+  -> J'essaie alors de traquer directement le dossier 
+
+  /home/ilan/code/try-on/backend/src/routes
+
+  Et maintenant j'ai supprime mon dossier predictions.js ce qui a bien etait
+  pris en compte. 
+
+  quand je rajoute un fichier test.txt il apparait bien quand je traque
+  directement 
+
+  /home/ilan/code/try-on/backend/src/routes
+
+  Mais les autres fichier dans ce dossier ne sont pas affiche ... 

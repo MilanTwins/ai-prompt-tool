@@ -1,4 +1,4 @@
-source_directory: /home/ilan/code/ai-promp-tool
+source_directory: /home/ilan/code/try-on/backend/src/routes
 exclude_patterns:
   - data
   - .git
@@ -12,7 +12,7 @@ exclude_patterns:
   - build
   - coverage
   - .cache
-  - out
+  - out/
   - '*.log'
   - .DS_Store
   - Thumbs.db
@@ -23,9 +23,8 @@ exclude_patterns:
   - '*.tmp'
   - '*.bak'
   - '*.swp'
+  - translations/*.json
+  - translations/
 selected_project_data: project_data.yaml
 selected_user_config: user_config.yaml
-selected_files:
-  - scripts/apply_diff.py
-  - scripts/generate_prompt.py
-  - scripts/generate_structure.py
+selected_files: []

@@ -29,7 +29,7 @@ class FileTree {
             // Clear selected files when loading new tree
             this.selectedFiles.clear();
             
-            const tree = await ApiService.getFileStructure();
+            const tree = await ApiService.getFullStructure();
             StateService.setFileTree(tree);
             
             this.container.innerHTML = '';
@@ -55,8 +55,8 @@ class FileTree {
         const label = document.createElement('label');
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.checked = true; // Default checked
-        this.selectedFiles.add(item.path);
+        checkbox.checked = false; // Default unchecked
+        // Ne pas ajouter automatiquement à selectedFiles
         
         const span = document.createElement('span');
         span.className = item.type === 'directory' ? 'folder-icon' : 'file-icon';
