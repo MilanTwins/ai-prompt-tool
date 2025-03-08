@@ -1,4 +1,4 @@
-source_directory: /home/ilan/code/try-on/backend/src/routes
+source_directory: /home/ilan/code/TryOnIframe
 exclude_patterns:
   - data
   - .git
@@ -27,4 +27,44 @@ exclude_patterns:
   - translations/
 selected_project_data: project_data.yaml
 selected_user_config: user_config.yaml
-selected_files: []
+selected_files:
+  - admin_frontend/src/features/auth/components
+  - admin_frontend/src/features/auth/components/UserProfile
+  - >-
+    admin_frontend/src/features/auth/components/UserProfile/ChangePasswordForm.jsx
+  - admin_frontend/src/features/auth/components/UserProfile/UserProfilePage.jsx
+  - admin_frontend/src/features/auth/components/UserProfile/index.js
+  - admin_frontend/src/features/auth/components/ForgotPasswordPage.jsx
+  - admin_frontend/src/features/auth/components/GoogleCallbackPage.jsx
+  - admin_frontend/src/features/auth/components/GoogleLoginButton.jsx
+  - admin_frontend/src/features/auth/components/LoginPage.jsx
+  - admin_frontend/src/features/auth/components/ProtectedAdminRoute.jsx
+  - admin_frontend/src/features/auth/components/ProtectedRoute.jsx
+  - admin_frontend/src/features/auth/components/ResetPasswordPage.jsx
+  - admin_frontend/src/features/auth/components/SetPasswordPage.jsx
+  - admin_frontend/src/features/auth/components/UserForm.jsx
+  - admin_frontend/src/features/auth/components/UserList.jsx
+  - admin_frontend/src/features/auth/components/UsersPage.jsx
+  - admin_frontend/src/features/auth/components/index.js
+  - admin_frontend/src/features/auth/constants
+  - admin_frontend/src/features/auth/constants/authConstants.js
+  - admin_frontend/src/features/auth/constants/index.js
+  - admin_frontend/src/features/auth/context
+  - admin_frontend/src/features/auth/context/AuthContext.jsx
+  - admin_frontend/src/features/auth/context/index.js
+  - admin_frontend/src/features/auth/hooks
+  - admin_frontend/src/features/auth/hooks/index.js
+  - admin_frontend/src/features/auth/hooks/useAuth.js
+  - admin_frontend/src/features/auth/hooks/useUsers.js
+  - admin_frontend/src/features/auth/services
+  - admin_frontend/src/features/auth/services/authService.js
+  - admin_frontend/src/features/auth/services/axiosInterceptor.js
+  - admin_frontend/src/features/auth/services/index.js
+  - admin_frontend/src/features/auth/services/userService.js
+  - admin_frontend/src/features/auth/index.js
+  - backend/prisma/schema.prisma
+  - backend/src/controllers/authController.js
+  - backend/src/config/awsConfig.js
+  - backend/src/config/passportConfig.js
+  - backend/src/middleware/authMiddleware.js
+  - backend/src/services/authService.js

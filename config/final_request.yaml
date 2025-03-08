@@ -1,22 +1,54 @@
-final_request: >
-  -> quand je traque le dossier /home/ilan/code/try-on/ 
-
-  L'ui affiches bien les dossier dedans mais n'affiche pas le dossier et ce que
-  contient : 
-
-  /home/ilan/code/try-on/backend/src/routes/
+final_request: >-
+  Contexte : Nous avons implémenté une fonctionnalité d’authentification via
+  Google SSO dans notre application (Node.js/Express côté backend, React côté
+  frontend). Nous utilisons passport-google-oauth20 et plusieurs endpoints
+  d’API.
 
 
-  -> J'essaie alors de traquer directement le dossier 
+  Je vais te fournir tout le code concerné (fichiers passportConfig.js,
+  authController.js, authRoutes.js, la partie frontend GoogleLoginButton, etc.),
+  et je souhaite que tu réalises une revue de code complète en mode brutalement
+  honnête :
 
-  /home/ilan/code/try-on/backend/src/routes
 
-  Et maintenant j'ai supprime mon dossier predictions.js ce qui a bien etait
-  pris en compte. 
+  Relis chaque partie du code.
 
-  quand je rajoute un fichier test.txt il apparait bien quand je traque
-  directement 
+  Analyse la cohérence de la logique (frontend et backend).
 
-  /home/ilan/code/try-on/backend/src/routes
+  Repère toutes les failles de sécurité potentielles (ex: redirection mal
+  paramétrée, fuites de secret, collisions d’URL, etc.).
 
-  Mais les autres fichier dans ce dossier ne sont pas affiche ... 
+  Vérifie la conformité aux bonnes pratiques (ex: usage correct de passport,
+  validations d’email, gestion active/inactive, etc.).
+
+  Vérifie l’implémentation de la logique redirect_uri, l’éventuel mismatch, la
+  configuration côté Google Cloud Console (redirect URI, domain authorized,
+  etc.).
+
+  Examine la qualité du code (naming, structure, duplication, etc.).
+
+  Signale tout ce qui pourrait être amélioré ou refactorisé pour rendre le code
+  plus “pro” (ex: validations d’erreurs, doc, logs, tests).
+
+  Sois extrêmement direct si quelque chose te paraît “sale” ou fragile. Indique
+  clairement les modifications recommandées.
+
+  Objectif : Obtenir une liste détaillée de tous les problèmes et points
+  d’amélioration (architecture, sécurité, style, UX, logs, etc.), afin
+  d’atteindre un niveau propre et professionnel.
+
+
+  Important :
+
+
+  Sois critique : tout ce qui n’est pas optimal doit être remonté.
+
+  N’hésite pas à pointer des incohérences ou redondances.
+
+  Vérifie la gestion du “state” OAuth s’il y a usage d’un token d’invitation.
+
+  Passe en revue le front (React) : l’utilisation de window.location.href, la
+  gestion des tokens, la page callback, etc.
+
+  En clair : je veux une “code review” exhaustive, la plus honnête et
+  approfondie possible, soulignant tous les aspects à corriger ou renforcer.
