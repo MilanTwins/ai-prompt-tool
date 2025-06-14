@@ -1,3 +1,4 @@
+{% if prompt_options.include_role_and_expertise %}
 ====================================
 ROLE AND EXPERTISE
 ====================================
@@ -16,7 +17,9 @@ Approach:
 3. Consider implications and trade-offs
 4. Validate solutions against requirements
 5. Provide clear, actionable steps
+{% endif %}
 
+{% if prompt_options.include_final_request %}
 ====================================
 DYNAMIC TASK - USER REQUEST
 ====================================
@@ -25,7 +28,9 @@ DYNAMIC TASK - USER REQUEST
 {{ request }}
 
 Your response must strictly follow the format specified in the FORMAT INSTRUCTIONS section below. This format is crucial for proper processing of your response.
+{% endif %}
 
+{% if prompt_options.include_format_instructions %}
 ====================================
 FORMAT INSTRUCTIONS
 ====================================
@@ -40,7 +45,9 @@ Examples:
 {% for ex in format_examples %}
 {{ ex }}
 {% endfor %}
+{% endif %}
 
+{% if prompt_options.include_project_info %}
 ====================================
 PROJECT INFORMATION
 ====================================
@@ -80,7 +87,9 @@ Coding Style:
 {% endif %}
 
 {% endfor %}
+{% endif %}
 
+{% if prompt_options.include_structure %}
 ====================================
 PROJECT STRUCTURE
 ====================================
@@ -94,7 +103,9 @@ PROJECT STRUCTURE
 {{ structure_content }}
 {% endif %}
 {% endwith %}
+{% endif %}
 
+{% if prompt_options.include_code_content %}
 ====================================
 CODE CONTENT
 ====================================
@@ -112,3 +123,4 @@ Language: {{ file_item.language }}
 ---------------------------------------------------------------------------
 {% endif %}
 {% endfor %}
+{% endif %}

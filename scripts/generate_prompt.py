@@ -3,6 +3,7 @@ import os
 import sys
 import yaml
 import xml.etree.ElementTree as ET
+import argparse
 from jinja2 import Environment, FileSystemLoader
 
 def load_user_config():
@@ -67,11 +68,17 @@ def load_format_data(format_name):
     return instructions, examples
 
 def main():
-    if len(sys.argv) < 2:
-        print("Error: format argument missing.")
-        sys.exit(1)
-
-    chosen_format = sys.argv[1].lower()
+    parser = argparse.ArgumentParser(description="Generate a final prompt from project context.")
+    parser.add_argument("format", help="The format for the prompt.")
+    parser.add_argument("--include-role-and-expertise", action="store_true", help="Include the role and expertise section.")
+    parser.add_argument("--include-final-request", action="store_true", help="Include the final request section.")
+    parser.add_argument("--include-format-instructions", action="store_true", help="Include the format instructions section.")
+    parser.add_argument("--include-project-info", action="store_true", help="Include the project information section.")
+    parser.add_argument("--include-structure", action="store_true", help="Include the project structure section.")
+    parser.add_argument("--include-code-content", action="store_true", help="Include the code content section.")
+    
+    args = parser.parse_args()
+    chosen_format = args.format.lower()
 
     project_data = load_project_data()
     final_request = load_final_request()
@@ -108,16 +115,26 @@ def main():
     template = env.get_template("prompt_template.txt.jinja2")
 
     # Prepare template context
+    prompt_options = {
+        "include_role_and_expertise": args.include_role_and_expertise,
+        "include_final_request": args.include_final_request,
+        "include_format_instructions": args.include_format_instructions,
+        "include_project_info": args.include_project_info,
+        "include_structure": args.include_structure,
+        "include_code_content": args.include_code_content,
+    }
+
     template_context = {
         "project_name": project_data.get("project_name", ""),
-        "project_data": project_data,  # Pass the entire project_data for dynamic rendering
+        "project_data": project_data,
         "code_structure": code_structure,
         "files_info": files_info,
         "code_files": code_files,
         "request": final_request,
         "chosen_format": chosen_format,
         "format_instructions": format_instructions,
-        "format_examples": format_examples
+        "format_examples": format_examples,
+        "prompt_options": prompt_options
     }
 
     prompt = template.render(**template_context)

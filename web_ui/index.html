@@ -32,6 +32,16 @@
 
             <h2>Available Formats</h2>
             <select id="formatSelect"></select>
+
+            <h2>Prompt Sections</h2>
+            <div id="promptOptions" class="prompt-options">
+                <label><input type="checkbox" name="include_role_and_expertise" checked> Role and Expertise</label>
+                <label><input type="checkbox" name="include_final_request" checked> Final Request</label>
+                <label><input type="checkbox" name="include_format_instructions" checked> Format Instructions</label>
+                <label><input type="checkbox" name="include_project_info" checked> Project Information</label>
+                <label><input type="checkbox" name="include_structure" checked> Project Structure</label>
+                <label><input type="checkbox" name="include_code_content" checked> Code Content</label>
+            </div>
             
             <h2>Final Request (final_request.yaml)</h2>
             <textarea id="finalRequest" rows="10" placeholder="Type your final_request.yaml here..."></textarea>
@@ -145,13 +155,18 @@
                     return;
                 }
 
+                const promptOptions = {};
+                document.querySelectorAll('#promptOptions input[type="checkbox"]').forEach(checkbox => {
+                    promptOptions[checkbox.name] = checkbox.checked;
+                });
+
                 try {
                     loadingUtils.showLoading(generateBtn);
 
                     await ApiService.updateSource(sourceDir);
                     await ApiService.updateFinalRequest(finalReqContent);
                     
-                    const prompt = await ApiService.generatePrompt(chosenFormat);
+                    const prompt = await ApiService.generatePrompt(chosenFormat, promptOptions);
                     promptOutput.textContent = prompt;
 
                     const copied = await clipboardUtils.copyToClipboard(prompt);

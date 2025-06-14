@@ -174,15 +174,27 @@ app.post('/api/updateFinalRequest', (req, res) => {
 
 // Génère le prompt final
 app.post('/api/generate', (req, res) => {
-  const { format } = req.body;
+  const { format, options } = req.body;
   const genStructureCmd = `python3 scripts/generate_structure.py`;
+
   exec(genStructureCmd, { cwd: __dirname }, (err) => {
     if (err) {
       console.error("Erreur génération structure:", err);
       return res.status(500).send('Error running generate_structure.py');
     }
-    const genPromptCmd = `python3 scripts/generate_prompt.py ${format}`;
-    exec(genPromptCmd, { cwd: __dirname }, (error, stdout, stderr) => {
+
+    let commandArgs = [format];
+    if (options) {
+        if (options.include_role_and_expertise) commandArgs.push('--include-role-and-expertise');
+        if (options.include_final_request) commandArgs.push('--include-final-request');
+        if (options.include_format_instructions) commandArgs.push('--include-format-instructions');
+        if (options.include_project_info) commandArgs.push('--include-project-info');
+        if (options.include_structure) commandArgs.push('--include-structure');
+        if (options.include_code_content) commandArgs.push('--include-code-content');
+    }
+
+    const genPromptCmd = `python3 scripts/generate_prompt.py ${commandArgs.join(' ')}`;
+    exec(genPromptCmd, { cwd: __dirname, maxBuffer: 1024 * 1024 * 50 }, (error, stdout, stderr) => {
       if (error) {
         console.error("Erreur génération prompt:", stderr);
         return res.status(500).send('Error generating prompt');

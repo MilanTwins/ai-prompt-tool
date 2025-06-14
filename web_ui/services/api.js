@@ -102,11 +102,11 @@ class ApiService {
         return response.json();
     }
 
-    static async generatePrompt(format) {
+    static async generatePrompt(format, options) {
         const response = await fetch('/api/generate', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ format })
+            body: JSON.stringify({ format, options })
         });
         if (!response.ok) throw new Error('Failed to generate prompt');
         return response.text();

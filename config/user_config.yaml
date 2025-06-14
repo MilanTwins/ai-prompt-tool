@@ -1,4 +1,4 @@
-source_directory: /home/ilan/code/TryOnIframe
+source_directory: /home/ilan/code/youtubeFactCheck
 exclude_patterns:
   - data
   - .git
@@ -28,46 +28,4 @@ exclude_patterns:
 selected_project_data: project_data.yaml
 selected_user_config: user_config.yaml
 selected_files:
-  - backend/prisma/migrations
-  - backend/prisma/migrations/20250214230049_init
-  - backend/prisma/migrations/20250214230049_init/migration.sql
-  - backend/prisma/migrations/20250214235212_update_tryon_image_file_relation
-  - >-
-    backend/prisma/migrations/20250214235212_update_tryon_image_file_relation/migration.sql
-  - backend/prisma/migrations/20250219003719_add_product_id
-  - backend/prisma/migrations/20250219003719_add_product_id/migration.sql
-  - backend/prisma/migrations/20250219020515_
-  - backend/prisma/migrations/20250219020515_/migration.sql
-  - backend/prisma/migrations/20250226051631_add_import_job_models
-  - backend/prisma/migrations/20250226051631_add_import_job_models/migration.sql
-  - backend/prisma/migrations/20250226075103_add_error_type_and_text_fields
-  - >-
-    backend/prisma/migrations/20250226075103_add_error_type_and_text_fields/migration.sql
-  - backend/prisma/migrations/20250226130503_add_import_batch_results
-  - >-
-    backend/prisma/migrations/20250226130503_add_import_batch_results/migration.sql
-  - >-
-    backend/prisma/migrations/20250227125006_add_paused_and_cancelled_with_rollback_statuses
-  - >-
-    backend/prisma/migrations/20250227125006_add_paused_and_cancelled_with_rollback_statuses/migration.sql
-  - >-
-    backend/prisma/migrations/20250227130602_add_last_processed_index_to_import_job
-  - >-
-    backend/prisma/migrations/20250227130602_add_last_processed_index_to_import_job/migration.sql
-  - backend/prisma/migrations/20250228121525_add_config_model
-  - backend/prisma/migrations/20250228121525_add_config_model/migration.sql
-  - backend/prisma/migrations/20250228141509_add_session_generations
-  - >-
-    backend/prisma/migrations/20250228141509_add_session_generations/migration.sql
-  - backend/prisma/migrations/20250303010855_add_version_to_config
-  - backend/prisma/migrations/20250303010855_add_version_to_config/migration.sql
-  - backend/prisma/migrations/20250304001320_add_authentication_models
-  - >-
-    backend/prisma/migrations/20250304001320_add_authentication_models/migration.sql
-  - backend/prisma/migrations/20250306072054_add_has_set_password_field
-  - >-
-    backend/prisma/migrations/20250306072054_add_has_set_password_field/migration.sql
-  - backend/prisma/migrations/20250307090212_add_google_id
-  - backend/prisma/migrations/20250307090212_add_google_id/migration.sql
-  - backend/prisma/migrations/migration_lock.toml
-  - backend/prisma/schema.prisma
+  - backend/index.js
