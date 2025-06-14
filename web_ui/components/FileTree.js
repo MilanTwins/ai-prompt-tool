@@ -79,7 +79,9 @@ class FileTree {
 
             div.appendChild(children);
             
-            span.addEventListener('click', () => {
+            span.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
                 div.classList.toggle('expanded');
                 children.style.display = children.style.display === 'none' ? 'block' : 'none';
             });
